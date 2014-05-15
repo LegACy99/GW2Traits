@@ -24,6 +24,10 @@
     </ul>
 
     <ul id="traits"></ul>
+
+    <b>Types</b>
+    <div id="acquisition-filter"></div>
+
     <ul id="maps"></ul>
 
     <div style="display:none" class="error">
@@ -43,8 +47,44 @@
 
   <script type="text/javascript">
   	//Global variables
-	var MapCount 		= {};
-	var TraitMaps		= {};
+	var MapCount 			= {};
+	var TraitMaps			= {};
+	var Acquisitions		= {};
+	var TraitUnlocks		= {};
+	var TraitAcquisitions	= {};
+
+	//Refresh map
+	function refreshMaps() {
+		//Recount
+		countMaps();
+
+		//Sort and display
+		var Maps = sortMaps();
+		displayMaps(Maps);
+	}
+
+	//Calculate map count
+  	function countMaps() {
+  		//Reset map counts
+		for (var Name in MapCount) MapCount[Name] = 0;
+
+		//For all traits
+		for (var Trait in TraitAcquisitions) {
+			//Get data
+			var Map 		= TraitMaps[Trait];
+			var Unlocked	= TraitUnlocks[Trait];
+			var Valid 		= Acquisitions[TraitAcquisitions[Trait]];
+			if (Valid == null) Valid = true;
+
+			//Check data
+			if (Valid && Map != null && !Unlocked) {
+				//Add to count
+				if (MapCount[Map] == null) 	MapCount[Map] = 1;
+				else 						MapCount[Map]++;	
+			}
+		}
+  	}
+
 	//Sort maps from map count
   	function sortMaps() {
   		//For each map
@@ -75,28 +115,37 @@
 		//For each map
 		var MapList = "";
 		for (var i = 0; i < maps.length; i++) {
-			//Set string
-			MapList += "<li>" + maps[i]; 
-			if (MapCount[maps[i]] != null) MapList += " - " + MapCount[maps[i]];
-			MapList += "</li>";
+			//Get data
+			var MapName = maps[i];
+			var Count 	= MapCount[MapName];
+			if (Count != null && Count > 0) {
+				//Extend string
+				MapList += "<li>" + MapName + " - " + Count + "</li>";
+			}
 		}
 
 		//Write
 		document.getElementById('maps').innerHTML = MapList;
   	}
 
-  	//Checkbox click
+  	//Trait checkbox click
   	function onTraitClick(element) {
-  		//Get map
-  		var MapName = TraitMaps[element.id];
-  		if (MapName != null) {
-  			//Manage count
-  			MapCount[MapName] += element.checked ? -1 : 1;
+  		//Skip if no element
+  		if (element == null) return;
 
-	  		//Redraw
-	  		var Sorted = sortMaps();
-	  		displayMaps(Sorted);
-  		}
+  		//Change data and refresh
+  		TraitUnlocks[element.value] = element.checked;
+  		refreshMaps();
+  	}
+
+  	//Filter checkbox click
+  	function onAcquisitionClick(element) {
+  		//Skip if no element
+  		if (element == null) return;
+
+  		//Change data and refresh
+  		Acquisitions[element.value] = element.checked;
+  		refreshMaps();
   	}
 
 	//Initialize
@@ -126,31 +175,50 @@
 				//Start trait item list
 				TraitList += '<li>Trait ' + traits[i].get("line") + '-' + traits[i].get("number");
 
+				//Set up data
+				var ID 					= traits[i].id;
+				TraitAcquisitions[ID] 	= traits[i].get("acquisition").id;
+				TraitUnlocks[ID]		= false;
+
 				//Get map
 				var Map = traits[i].get("map");
 				if (Map != null) {
 					//Save
-					var MapName 			= Map.get("name");
-					TraitMaps[traits[i].id] = MapName;
+					var MapName 	= Map.get("name");
+					TraitMaps[ID] 	= MapName;
 
 					//Extend string
 					TraitList += " at " + MapName;
-
-					//Increment
-					if (MapCount[MapName] == null) 	MapCount[MapName] = 1;
-					else 							MapCount[MapName]++;
 				}
 
 				//Close
-				TraitList += ' <input id="' + traits[i].id + '" type="checkbox" onclick="onTraitClick(this)"></li>';
+				TraitList += ' <input id=trait-check_"' + ID + '" value="' + ID + '" type="checkbox" onclick="onTraitClick(this)"></li>';
 			}
 
-			//Write trait
+			//Write stuff
 			document.getElementById('traits').innerHTML = TraitList;
+			refreshMaps();
+		}
+	});
 
-			//Write map
-			var Sorted = sortMaps();
-			displayMaps(Sorted);
+	//Query all acquisition
+	var AcquisitionObject 	= Parse.Object.extend("Acquisition");
+	var AcquisitionQuery	= new Parse.Query(AcquisitionObject);
+	AcquisitionQuery.find({
+		success: function(acquisitions) {
+			//For each type
+			var FilterText = "";
+			for (var i = 0; i < acquisitions.length; i++) {
+				//Get ID
+				var ID 				= acquisitions[i].id;
+				Acquisitions[ID]	= true; 
+
+				//Set text
+				FilterText += '<label><input type="checkbox" onclick="onAcquisitionClick(this)" checked="checked" id=acquisition-checkb_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
+			}
+
+			//Write
+			document.getElementById('acquisition-filter').innerHTML = FilterText;
 		}
 	});
   </script>

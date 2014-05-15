@@ -23,8 +23,8 @@
       <li><a href="https://www.parse.com/docs/js">Parse JavaScript API Documentation</a></li>
     </ul>
 
-    <ul id="traits">
-    </ul>
+    <ul id="traits"></ul>
+    <ul id="maps"></ul>
 
     <div style="display:none" class="error">
       Looks like there was a problem saving the test object. Make sure you've set your application ID and javascript key correctly in the call to <code>Parse.initialize</code> in this file.
@@ -42,6 +42,63 @@
   </div>
 
   <script type="text/javascript">
+  	//Global variables
+	var MapCount 		= {};
+	var TraitMaps		= {};
+	//Sort maps from map count
+  	function sortMaps() {
+  		//For each map
+		var Sorted = [];
+		for (var Name in MapCount) {
+			//If not sorted yet, just insert it
+			if (Sorted.length <= 0) Sorted[0] = Name;
+			else {
+				//Find index to be inserted
+				Index = -1;
+				for (var i = 0; i < Sorted.length && Index < 0; i++) if (MapCount[Name] >= MapCount[Sorted[i]]) Index = i;
+				if (Index < 0) Index = Sorted.length;
+
+				//Insert at index
+				Sorted.splice(Index, 0, Name); 
+			}
+		}
+
+		//Return sorted map
+		return Sorted;
+  	}
+
+  	//Display maps
+  	function displayMaps(maps) {
+  		//Skip if no map
+  		if (maps == null) return;
+
+		//For each map
+		var MapList = "";
+		for (var i = 0; i < maps.length; i++) {
+			//Set string
+			MapList += "<li>" + maps[i]; 
+			if (MapCount[maps[i]] != null) MapList += " - " + MapCount[maps[i]];
+			MapList += "</li>";
+		}
+
+		//Write
+		document.getElementById('maps').innerHTML = MapList;
+  	}
+
+  	//Checkbox click
+  	function onTraitClick(element) {
+  		//Get map
+  		var MapName = TraitMaps[element.id];
+  		if (MapName != null) {
+  			//Manage count
+  			MapCount[MapName] += element.checked ? -1 : 1;
+
+	  		//Redraw
+	  		var Sorted = sortMaps();
+	  		displayMaps(Sorted);
+  		}
+  	}
+
 	//Initialize
 	Parse.initialize("SDiJ7OLjISzQIt2RTOgQOTlCh8Nj0xPHwm17Isq2", "mkJfAEKHWnCkUgFT7a2Z7Btf0PGoUdBZzMbtqLTd");
     
@@ -54,111 +111,46 @@
 	  error: function(model, error) {
 		$(".error").show();
 	  }
-	});
-	*/
+	});*/
 
-	//Initialize
-	var Maps 		= {};
-	var Traits 		= [];
-	var TraitMaps	= [];
-	var MapNames	= {};
+	//Query all traits
 	var TraitObject = Parse.Object.extend("Trait");
 	var TraitQuery	= new Parse.Query(TraitObject);
 	
-	//Query all traits
-	//TraitQuery.include("map");
-	/*TraitQuery.find().then(function(traits) {
-		//For each trait
-		for (var i = 0; i < 15; i++) {
-			//Save data
-			Traits[i] = "Trait " + traits[i].get("line") + '-' + traits[i].get("number");
-
-			//If there's map
-			var Map = traits[i].get("map");
-			if (Map != null) {
-				//Save
-				console.log("Map name " + Map.get("name"));
-				Maps[Map.id] = Map;
-				TraitMaps[i] = Map.id;
-			}
-		}
-
-		//For all map
-		var Promise = Parse.Promise.as();
-		for (var ID in Maps) {
-			//Get map
-			console.log("Map " + ID);
-			if (Maps[ID] != null) {
-				//Extend promise
-				Promise = Promise.then(function() {
-					//Fetch whole map data
-					return Maps[ID].fetch().then(function(map) {
-						//Save
-						console.log("Done3 " + map.id);
-						MapNames[map.id] = map.get("name");
-					});
-				});
-			}
-		}
-
-		//Done
-		return Promise;
-	}).then(function() {
-		//Prepare text
-		var TraitText = "";
-		for (var i = 0; i < Traits.length; i++) {
-			//Write trait item
-			TraitText += "<li>" + Traits[i];
-			if (TraitMaps[i] != null) {
-				TraitText += " at " + MapNames[TraitMaps[i]];
-				console.log("Trait map" + TraitMaps[i] + " " + MapNames);
-			}
-			TraitText += "</li>";
-		}
-
-		//Write
-		document.getElementById('traits').innerHTML = TraitText;
-		//				console.log("Done all" + TraitText);
-	});*/
-
+	TraitQuery.include("map");
 	TraitQuery.find({
 		success: function(traits) {
-			//Initialize
-			var Maps 		= {};
-			var ListText 	= "";
-
 			//For each result
+			var TraitList = "";
 			for (var i = 0; i < traits.length; i++) {
-				//Start trait item
-				ListText += '<li>Trait ' + traits[i].get("line") + '-' + traits[i].get("number");
+				//Start trait item list
+				TraitList += '<li>Trait ' + traits[i].get("line") + '-' + traits[i].get("number");
 
 				//Get map
 				var Map = traits[i].get("map");
 				if (Map != null) {
 					//Save
-					Maps[Map.id] = Map;
-					ListText += ' <span class="map-name_' + Map.id + '"></span>'
+					var MapName 			= Map.get("name");
+					TraitMaps[traits[i].id] = MapName;
+
+					//Extend string
+					TraitList += " at " + MapName;
+
+					//Increment
+					if (MapCount[MapName] == null) 	MapCount[MapName] = 1;
+					else 							MapCount[MapName]++;
 				}
 
 				//Close
-				ListText += "</li>";
+				TraitList += ' <input id="' + traits[i].id + '" type="checkbox" onclick="onTraitClick(this)"></li>';
 			}
 
-			//Write
-			document.getElementById('traits').innerHTML = ListText;
+			//Write trait
+			document.getElementById('traits').innerHTML = TraitList;
 
-			//For each map
-			for (var ID in Maps) {
-				//Get map
-				var Map = Maps[ID];
-				if (Map != null) Map.fetch({
-					success: function(map) {
-						//Display map name
-						var Elements = document.getElementsByClassName("map-name_" + map.id);
-						for (var j = 0; j < Elements.length; j++) Elements[j].innerHTML += " " + map.get('name');
-					}
-				});
-			}
+			//Write map
+			var Sorted = sortMaps();
+			displayMaps(Sorted);
 		}
 	});
   </script>

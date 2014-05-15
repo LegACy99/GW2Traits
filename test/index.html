@@ -133,8 +133,11 @@
   		//Skip if no element
   		if (element == null) return;
 
-  		//Change data and refresh
+  		//Change data
   		TraitUnlocks[element.value] = element.checked;
+  		saveCookies();
+
+  		//Refresh
   		refreshMaps();
   	}
 
@@ -143,13 +146,60 @@
   		//Skip if no element
   		if (element == null) return;
 
-  		//Change data and refresh
+  		//Change data
   		Acquisitions[element.value] = element.checked;
+  		saveCookies();
+
+  		//Refresh
   		refreshMaps();
+  	}
+
+  	function loadCookies() {
+  		//Get cookie
+		var RawCookie = document.cookie;
+		console.log(RawCookie);
+		if (RawCookie != null && RawCookie.length > 0) {
+			//Get json text
+			var RawJSON = RawCookie.substr('cookie='.length);
+			if (RawJSON != null && RawJSON.length > 0) {
+				//Create object
+				var Cookie = JSON.parse(decodeURI(RawJSON));
+				console.log(JSON.stringify(Cookie));
+
+				//Get trait
+				if (Cookie.traits != null) {
+					//Save each trait data
+					for (var i = 0; i < Cookie.traits.length; i++) TraitUnlocks[Cookie.traits[i]] = true;
+				}
+
+				//Get acquisition filter
+				if (Cookie.acquisitions != null) {
+					//For each acquisition type
+					for (var i = 0; i < Cookie.acquisitions.length; i++) Acquisitions[Cookie.acquisitions[i]] = false;
+				}
+			}
+		}
+  	}
+
+  	function saveCookies() {
+  		//Initialize object
+  		var Cookie = {
+  			traits: [],
+  			acquisitions: []
+  		};
+
+  		//Populate
+  		for (var ID in Acquisitions) 	if (!Acquisitions[ID]) Cookie.acquisitions.push(ID);
+  		for (var Trait in TraitUnlocks)	if (TraitUnlocks[Trait]) Cookie.traits.push(Trait);
+
+  		//Write
+  		var JSONText = encodeURI(JSON.stringify(Cookie));
+  		document.cookie = "cookie=" + JSONText + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
   	}
 
 	//Initialize
 	Parse.initialize("SDiJ7OLjISzQIt2RTOgQOTlCh8Nj0xPHwm17Isq2", "mkJfAEKHWnCkUgFT7a2Z7Btf0PGoUdBZzMbtqLTd");
+	loadCookies();
     
 	/*var TestObject = Parse.Object.extend("TestObject");
 	var testObject = new TestObject();
@@ -178,7 +228,7 @@
 				//Set up data
 				var ID 					= traits[i].id;
 				TraitAcquisitions[ID] 	= traits[i].get("acquisition").id;
-				TraitUnlocks[ID]		= false;
+				if (TraitUnlocks[ID] == null) TraitUnlocks[ID] = false;
 
 				//Get map
 				var Map = traits[i].get("map");
@@ -192,7 +242,9 @@
 				}
 
 				//Close
-				TraitList += ' <input id=trait-check_"' + ID + '" value="' + ID + '" type="checkbox" onclick="onTraitClick(this)"></li>';
+				TraitList += ' <input id=trait-check_"' + ID + '" value="' + ID + '" type="checkbox" onclick="onTraitClick(this)"';
+				if (TraitUnlocks[ID]) TraitList += ' checked="checked"';
+				TraitList += '></li>';
 			}
 
 			//Write stuff
@@ -210,11 +262,13 @@
 			var FilterText = "";
 			for (var i = 0; i < acquisitions.length; i++) {
 				//Get ID
-				var ID 				= acquisitions[i].id;
-				Acquisitions[ID]	= true; 
+				var ID 	= acquisitions[i].id;
+				if (Acquisitions[ID] == null) Acquisitions[ID]	= true; 
 
 				//Set text
-				FilterText += '<label><input type="checkbox" onclick="onAcquisitionClick(this)" checked="checked" id=acquisition-checkb_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
+				FilterText += '<label><input type="checkbox" onclick="onAcquisitionClick(this)"';
+				if (Acquisitions[ID]) FilterText += ' checked="checked"';
+				FilterText += ' id=acquisition-checkb_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
 			}
 
 			//Write
@@ -223,5 +277,4 @@
 	});
   </script>
 </body>
-
 </html>

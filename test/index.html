@@ -26,7 +26,15 @@
     <ul id="traits"></ul>
 
     <b>Types</b>
-    <div id="acquisition-filter"></div>
+    <div id="acquisition-filter"></div><br />
+    <div>Max level: <select id="level-filter" onchange="onLevelChange(this)">
+    	<option value="30">30</option>
+    	<option value="40">40</option>
+    	<option value="50">50</option>
+    	<option value="60">60</option>
+    	<option value="70">70</option>
+    	<option value="80">80</option>
+    </select></div>
 
     <ul id="maps"></ul>
 
@@ -47,7 +55,9 @@
 
   <script type="text/javascript">
   	//Global variables
+	var MaxLevel			= 80;
 	var MapCount 			= {};
+	var MapLevels			= {};
 	var TraitMaps			= {};
 	var Acquisitions		= {};
 	var TraitUnlocks		= {};
@@ -70,14 +80,27 @@
 
 		//For all traits
 		for (var Trait in TraitAcquisitions) {
-			//Get data
-			var Map 		= TraitMaps[Trait];
-			var Unlocked	= TraitUnlocks[Trait];
-			var Valid 		= Acquisitions[TraitAcquisitions[Trait]];
-			if (Valid == null) Valid = true;
+			//Validate map and trait
+			var Map 	= TraitMaps[Trait];
+			var Valid	= Map != null;
+			if (Valid) Valid = !TraitUnlocks[Trait];
 
-			//Check data
-			if (Valid && Map != null && !Unlocked) {
+			//If still valid
+			if (Valid) {
+				//Validate minimum level
+				Valid = MapLevels[Map] == null;
+				if (!Valid) Valid = MapLevels[Map] < MaxLevel;
+			}
+
+			//If still valid
+			if (Valid) {
+				//Validate acquisition type
+				Valid = Acquisitions[TraitAcquisitions[Trait]];
+				if (Valid == null) Valid = true;
+			}
+
+			//If valid
+			if (Valid) {
 				//Add to count
 				if (MapCount[Map] == null) 	MapCount[Map] = 1;
 				else 						MapCount[Map]++;	
@@ -154,17 +177,28 @@
   		refreshMaps();
   	}
 
+  	//Level dropdown click
+  	function onLevelChange(element) {
+  		//Skip if no element
+  		if (element == null) return;
+
+		//Get level
+		MaxLevel = parseInt(element.value);
+		saveCookies();
+
+		//Refresh
+		refreshMaps();
+  	}
+
   	function loadCookies() {
   		//Get cookie
 		var RawCookie = document.cookie;
-		console.log(RawCookie);
 		if (RawCookie != null && RawCookie.length > 0) {
 			//Get json text
 			var RawJSON = RawCookie.substr('cookie='.length);
 			if (RawJSON != null && RawJSON.length > 0) {
 				//Create object
 				var Cookie = JSON.parse(decodeURI(RawJSON));
-				console.log(JSON.stringify(Cookie));
 
 				//Get trait
 				if (Cookie.traits != null) {
@@ -177,6 +211,10 @@
 					//For each acquisition type
 					for (var i = 0; i < Cookie.acquisitions.length; i++) Acquisitions[Cookie.acquisitions[i]] = false;
 				}
+
+				//Get max level
+				if (Cookie.max_level != null) MaxLevel = Cookie.max_level;
+				document.getElementById("level-filter").value = MaxLevel;
 			}
 		}
   	}
@@ -185,7 +223,8 @@
   		//Initialize object
   		var Cookie = {
   			traits: [],
-  			acquisitions: []
+  			acquisitions: [],
+  			max_level: MaxLevel
   		};
 
   		//Populate
@@ -214,8 +253,7 @@
 
 	//Query all traits
 	var TraitObject = Parse.Object.extend("Trait");
-	var TraitQuery	= new Parse.Query(TraitObject);
-	
+	var TraitQuery	= new Parse.Query(TraitObject);	
 	TraitQuery.include("map");
 	TraitQuery.find({
 		success: function(traits) {
@@ -234,8 +272,9 @@
 				var Map = traits[i].get("map");
 				if (Map != null) {
 					//Save
-					var MapName 	= Map.get("name");
-					TraitMaps[ID] 	= MapName;
+					var MapName 		= Map.get("name");
+					MapLevels[MapName]	= Map.get("minLevel");
+					TraitMaps[ID] 		= MapName;
 
 					//Extend string
 					TraitList += " at " + MapName;
@@ -268,7 +307,7 @@
 				//Set text
 				FilterText += '<label><input type="checkbox" onclick="onAcquisitionClick(this)"';
 				if (Acquisitions[ID]) FilterText += ' checked="checked"';
-				FilterText += ' id=acquisition-checkb_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
+				FilterText += ' id=acquisition-check_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
 			}
 
 			//Write

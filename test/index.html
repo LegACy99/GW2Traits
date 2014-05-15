@@ -23,6 +23,9 @@
       <li><a href="https://www.parse.com/docs/js">Parse JavaScript API Documentation</a></li>
     </ul>
 
+    <ul id="traits">
+    </ul>
+
     <div style="display:none" class="error">
       Looks like there was a problem saving the test object. Make sure you've set your application ID and javascript key correctly in the call to <code>Parse.initialize</code> in this file.
     </div>
@@ -52,31 +55,110 @@
 		$(".error").show();
 	  }
 	});
+	*/
+
+	//Initialize
+	var Maps 		= {};
+	var Traits 		= [];
+	var TraitMaps	= [];
+	var MapNames	= {};
+	var TraitObject = Parse.Object.extend("Trait");
+	var TraitQuery	= new Parse.Query(TraitObject);
 	
-	
-	var TestObject2 = Parse.Object.extend("TestObject");
-	var testObject2 = new TestObject2();
-	testObject.save({foo: "bar"}).then(function(object) {
-	  alert("yay! it worked");
+	//Query all traits
+	//TraitQuery.include("map");
+	/*TraitQuery.find().then(function(traits) {
+		//For each trait
+		for (var i = 0; i < 15; i++) {
+			//Save data
+			Traits[i] = "Trait " + traits[i].get("line") + '-' + traits[i].get("number");
+
+			//If there's map
+			var Map = traits[i].get("map");
+			if (Map != null) {
+				//Save
+				console.log("Map name " + Map.get("name"));
+				Maps[Map.id] = Map;
+				TraitMaps[i] = Map.id;
+			}
+		}
+
+		//For all map
+		var Promise = Parse.Promise.as();
+		for (var ID in Maps) {
+			//Get map
+			console.log("Map " + ID);
+			if (Maps[ID] != null) {
+				//Extend promise
+				Promise = Promise.then(function() {
+					//Fetch whole map data
+					return Maps[ID].fetch().then(function(map) {
+						//Save
+						console.log("Done3 " + map.id);
+						MapNames[map.id] = map.get("name");
+					});
+				});
+			}
+		}
+
+		//Done
+		return Promise;
+	}).then(function() {
+		//Prepare text
+		var TraitText = "";
+		for (var i = 0; i < Traits.length; i++) {
+			//Write trait item
+			TraitText += "<li>" + Traits[i];
+			if (TraitMaps[i] != null) {
+				TraitText += " at " + MapNames[TraitMaps[i]];
+				console.log("Trait map" + TraitMaps[i] + " " + MapNames);
+			}
+			TraitText += "</li>";
+		}
+
+		//Write
+		document.getElementById('traits').innerHTML = TraitText;
+		//				console.log("Done all" + TraitText);
 	});*/
-	
-	var MapObject 	= Parse.Object.extend("Map");
-	var Query		= new Parse.Query(MapObject);
-	Query.get("sB10r90P28", {
-		success: function(map) {
-			//Yay
-			alert("Woot " + map.get("Name"));
-			
-			//Create new trait
-			var Trait = Parse.Object.extend("Trait");
-			var TraitRow = new Trait();
-			TraitRow.save({Map: map}).then(function(object) {
-			  alert("Trait saved");
-			});
-		},
-		error: function(object, error) {
-			//Error
-			alert("Error!");
+
+	TraitQuery.find({
+		success: function(traits) {
+			//Initialize
+			var Maps 		= {};
+			var ListText 	= "";
+
+			//For each result
+			for (var i = 0; i < traits.length; i++) {
+				//Start trait item
+				ListText += '<li>Trait ' + traits[i].get("line") + '-' + traits[i].get("number");
+
+				//Get map
+				var Map = traits[i].get("map");
+				if (Map != null) {
+					//Save
+					Maps[Map.id] = Map;
+					ListText += ' <span class="map-name_' + Map.id + '"></span>'
+				}
+
+				//Close
+				ListText += "</li>";
+			}
+
+			//Write
+			document.getElementById('traits').innerHTML = ListText;
+
+			//For each map
+			for (var ID in Maps) {
+				//Get map
+				var Map = Maps[ID];
+				if (Map != null) Map.fetch({
+					success: function(map) {
+						//Display map name
+						var Elements = document.getElementsByClassName("map-name_" + map.id);
+						for (var j = 0; j < Elements.length; j++) Elements[j].innerHTML += " " + map.get('name');
+					}
+				});
+			}
 		}
 	});
   </script>

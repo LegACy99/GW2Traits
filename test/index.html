@@ -1,158 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-	    <meta charset="utf-8">
-	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	    <meta name="viewport" content="width=device-width, initial-scale=1">
-  		<link rel="stylesheet" href="css/styles.css">
-	    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-	    <title>Bootstrap 101 Template</title>
+	  <meta charset="utf-8">
 
-	    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-	    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	    <!--[if lt IE 9]>
-	      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-	    <![endif]-->
+	  <title>My Parse App</title>
+	  <meta name="description" content="My Parse App">
+	  <meta name="viewport" content="width=device-width">
+	  <link rel="stylesheet" href="css/reset.css">
+	  <link rel="stylesheet" href="css/styles.css">
+	  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
   	</head>
   	<body>
-  		<div class="trait-panel">
-	  		<div class="trait-row">
-	  			<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div style="clear:both"></div>
+  		<div style="width:500px; height: 100px; background-color:#0CF"></div>
+  		<div class="content">
+	  		<div class="trait-panel">
+		  		<div class="trait-row">
+		  			<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
 			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+		  		<div class="trait-row">
+		  			<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
 			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+		  		<div class="trait-row">
+		  			<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
 			  	</div>
-		  	</div>
-	  		<div class="trait-row">
-	  			<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+		  		<div class="trait-row">
+		  			<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
 			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+		  		<div class="trait-row">
+		  			<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
+				  	<div class="trait-box">
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
+				  	</div>
 			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-		  	</div>
-	  		<div class="trait-row">
-	  			<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-		  	</div>
-	  		<div class="trait-row">
-	  			<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-		  	</div>
-	  		<div class="trait-row">
-	  			<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-			  	<div class="trait-box">
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
-			  	</div>
-		  	</div>
-		</div>
+			</div>
 
-		<div class="map-panel">
-			<ul>
-				<li>Map 1</li>
-				<li>Map 2</li>
-				<li>Map 3</li>
-				<li>Map 4</li>
-			</ul>
-			<div class="map-filter">
-				<div>
-					<b>Max level </b><select id="level-filter" onchange="onLevelChange(this)">
-				    	<option value="30">30</option>
-				    	<option value="40">40</option>
-				    	<option value="50">50</option>
-				    	<option value="60">60</option>
-				    	<option value="70">70</option>
-				    	<option value="80">80</option>
-				    </select>
+			<div class="map-panel">
+				<div class="map-list">
+					<ul class="map-ul">
+						<li class="map-item1">Eternal Battleground (4 traits)</li>
+						<li class="map-item2">Cursed Shore (6 traits)</li>
+						<li class="map-item3">Fireheart Rise (4 traits)</li>
+						<li class="map-item">Edge of the Mist (3 traits)</li>
+						<li class="map-item">Eternal Battleground</li>
+						<li class="map-item">Harathi Hinterland</li>
+						<li class="map-item">Straits of Devastation (1 trait)</li>
+						<li class="map-item">Bloodtide Coast</li>
+						<li class="map-item">Sparkfly Fen (1 traits)</li>
+						<li class="map-item">Malchor's Leap (3 traits)</li>
+						<li class="map-item">Mountain Maelstrom (2 traits)</li>
+						<li class="map-item">Timberline Falls (3 traits)</li>
+					</ul>
 				</div>
-				<b>Types</b><br />
-				<div>
-					<label><input type="checkbox" checked="checked"> Type 1</label><br />
-					<label><input type="checkbox" checked="checked"> Type 2</label><br />
-					<label><input type="checkbox" checked="checked"> Type 3</label><br />
-				</div>
-				<div>
-					<label><input type="checkbox" checked="checked"> Type 4</label><br />
-					<label><input type="checkbox" checked="checked"> Type 5</label><br />
-					<label><input type="checkbox" checked="checked"> Type 6</label><br />
+				<div class="map-config">
+					<div class="level-config">
+						<b>Maximum level </b><select id="level-filter" onchange="onLevelChange(this)">
+					    	<option value="30">30</option>
+					    	<option value="40">40</option>
+					    	<option value="50">50</option>
+					    	<option value="60">60</option>
+					    	<option value="70">70</option>
+					    	<option value="80">80</option>
+					    </select>
+					</div>
+					<div class="type-config">
+						<b>Types</b><br />
+						<div class="type-config-left">
+							<label><input type="checkbox" checked="checked"> Type 1</label><br />
+							<label><input type="checkbox" checked="checked"> Event Completion</label><br />
+							<label><input type="checkbox" checked="checked"> Map Completion</label><br />
+						</div>
+						<div class="type-config-right">
+							<label><input type="checkbox" checked="checked"> Dungeon</label><br />
+							<label><input type="checkbox" checked="checked"> Exploration</label><br />
+							<label><input type="checkbox" checked="checked"> World versus World</label><br />
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

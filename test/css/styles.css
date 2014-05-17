@@ -1,10 +1,12 @@
 html {
-    position: relative;
+    margin: 0px auto;
     min-height: 100%;
+    max-width: 1100px;
+    position: relative;
+    background-color: #DDD;
 }
 
 body {
-    padding: 0px 100px;
     margin: 0px 0px 60px;
 }
 
@@ -39,10 +41,6 @@ footer {
     display: inline-block;
 }
 
-.footer {
-    padding: 0 100px;
-}
-
 .footer-text {
     text-align: center;
     margin-top: -5px;
@@ -55,6 +53,35 @@ footer {
 .trait-panel {
     background-color: #FFCCCC;
     display: inline-block;
+    margin-right: 4px;
+}
+
+.panel-header {
+    margin-top: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+    background-colora: yellow;
+    position: relative;
+}
+
+.trait-title {
+    font-size: 150%;
+    margin-left: 3px;
+    margin-bottom: -3px;
+    background-colora: cyan; 
+    position: absolute;
+    bottom: 0;
+}
+
+.trait-buttons {
+    text-align: right;
+    background-colora: blue;
+}
+
+.trait-button {
+    width: 140px;
+    padding: 4px 0px;
+    margin-left: 8px;
 }
 
 .trait-row {
@@ -77,10 +104,14 @@ footer {
 
 .map-panel {
     padding: 4px;
-    margin-left: 8px;
     background-color: #CCCCFF;
     display: inline-block;
     vertical-align: top;
+}
+
+.map-title {
+    font-size: 150%;
+    background-colora: orange;
 }
 
 .map-list {
@@ -172,43 +203,4 @@ footer {
     background-coloar: yellow;
     position: absolute;
     right: 0;
-}
-
-.container {
-    clear: left;
-}
-
-.trait-panel2 {
-    background-color: #FFCCCC;
-    display: inline-block;
-}
-
-.trait-box2 {
-    margin: 0px 8px;
-    padding: 6px 4px;
-    background-color: #CC6600; 
-    display: inline-block;
-}
-
-.trait-row2 {
-    margin: 8px 0px;
-}
-
-.content2 {x
-    background-color: #CCCCCC;
-}
-
-.map-panel2 {
-    display: inline-block;
-    vertical-align: top;
-    background-color: #CCCCFF;
-}
-
-.map-list2 {
-    background-color:#0CF;
-    height: 124px;
-}
-
-.map-config2 {
-    background-color:#F0C;
 }

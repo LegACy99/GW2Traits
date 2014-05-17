@@ -3,19 +3,33 @@
 	<head>
 	  <meta charset="utf-8">
 
-	  <title>My Parse App</title>
+	  <title>GW2Traits - Guild Wars 2 Trait Tracker</title>
 	  <meta name="description" content="My Parse App">
 	  <meta name="viewport" content="width=device-width">
 	  <link rel="stylesheet" href="css/reset.css">
 	  <link rel="stylesheet" href="css/styles.css">
   	</head>
   	<body>
+  		<!-- Header -->
   		<div class="header">
   			<div class="header-image"></div>
-  			<div class="header-text">Guild Wars 2 Traits Tracker</div>
+  			<div class="header-text">Guild Wars 2 Trait Tracker</div>
   		</div>
+
+  		<!-- Content -->
   		<div class="content">
+  			<!-- Traits -->
 	  		<div class="trait-panel">
+  				<!-- Trait header -->
+	  			<div class="panel-header">
+	  				<div class="trait-title"><b>Traits</b></div>
+	  				<div class="trait-buttons">
+		  				<input class="trait-button" type="button" value="Lock all traits" />
+		  				<input class="trait-button" type="button" value="Unlock all traits" />
+	  				</div>
+	  			</div>
+
+		  		<!-- List of traits -->
 		  		<div class="trait-row">
 		  			<div class="trait-box">
 				  		<div class="trait-icon" style="background-image: url(trait.png);"> </div>
@@ -124,6 +138,12 @@
 			</div>
 
 			<div class="map-panel">
+  				<!-- Map header -->
+	  			<div class="panel-header">
+	  				<div class="map-title"><b>Maps</b></div>
+	  			</div>
+
+	  			<!-- Map list -->
 				<div class="map-list">
 					<ul class="map-ul">
 						<li class="map-item1">Eternal Battleground (4 traits)</li>
@@ -140,6 +160,8 @@
 						<li class="map-item">Timberline Falls (3 traits)</li>
 					</ul>
 				</div>
+
+				<!-- Map filter -->
 				<div class="map-config">
 					<div class="level-config">
 						<b>Maximum level </b><select id="level-filter" onchange="onLevelChange(this)">

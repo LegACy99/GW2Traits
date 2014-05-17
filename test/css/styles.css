@@ -1,40 +1,54 @@
-#main {
-    width: 500px;
-    margin: auto;
-    text-align: left;
-    background: white;
-    padding: 50px 60px;
-    border: solid #ddd;
-    border-width: 0 1px 1px 1px;
+html {
+    position: relative;
+    min-height: 100%;
 }
 
-#main h1 {
-    margin-top: 0;
-    font-size: 35px;
+body {
+    padding: 0px 100px;
+    margin: 0px 0px 60px;
 }
 
-#main ul {
-    padding-left: 20px;
+footer {
+    position: absolute;
+    height: 60px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
 }
 
-#main .error {
-    border: 1px solid red;
-    background: #FDEFF0;
-    padding: 20px;
+.header {
+    margin-top: 12px;
+    margin-bottom: 18px;
+    background-color:#0CF;
 }
 
-#main .success {
-    margin-top: 25px;
+.header-image {
+    width: 120px;
+    height: 120px;
+    margin-left: 4px;
+    display: inline-block;
+    background-color: red;
 }
 
-#main .success code {
-    font-size: 12px;
-    color: green;
-    line-height: 13px;
+.header-text {
+    font-size: 280%;
+    margin-left: 4px;
+    margin-bottom: 12px;
+    vertical-align: bottom;
+    background-color: pink;
+    display: inline-block;
+}
+
+.footer {
+    padding: 0 100px;
+}
+
+.footer-text {
+    text-align: center;
+    margin-top: -5px;
 }
 
 .content {
-    position: relative;
     background-color: #CCCCCC;
 }
 
@@ -70,7 +84,8 @@
 }
 
 .map-list {
-    height: 237px;
+    width: 360px;
+    height: 231px;
     background-colora: white;
     margin-bottom: 4px;
     overflow: auto;
@@ -142,18 +157,21 @@
 }
 
 .map-config {
+    position: relative;
     background-colora: #C66;
 }
 
 .type-config-left {
     display: inline-block;
-    background-coloar: orange;
+    background-colora: orange;
 }
 
 .type-config-right {
-    margin-left: 8px;
+    margin-right: 12px;
     display: inline-block;
     background-coloar: yellow;
+    position: absolute;
+    right: 0;
 }
 
 .container {

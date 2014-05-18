@@ -7,8 +7,12 @@ gw2traits = function() {
 	var m_Acquisitions		= {};
 	var m_TraitUnlocks		= {};
 	var m_TraitAcquisitions	= {};
+	var m_TooltipHandler	= function(){};
 
-	var initialize = function() {
+	var initialize = function(tooltip) {
+		//Save callback
+		m_TooltipHandler = tooltip;
+
 		//Initialize
 		Parse.initialize("SDiJ7OLjISzQIt2RTOgQOTlCh8Nj0xPHwm17Isq2", "mkJfAEKHWnCkUgFT7a2Z7Btf0PGoUdBZzMbtqLTd");
 		loadCookies();
@@ -40,14 +44,6 @@ gw2traits = function() {
 						}
 					}
 
-					//Open
-					if (Column == 0) TraitList += '<div class="trait-row">';
-					if (Column == 0 || Column == TierCounts[0] || Column == TierCounts[1]) TraitList += '<div class="trait-box">';
-
-					//Start
-					//TraitList += '<li>Trait ' + traits[i].get("line") + '-' + traits[i].get("number");
-		  			TraitList += '<div class="trait-icon" style="background-image: url(trait.png);" title="A tooltip"></div>';
-
 					//Set up data
 					var ID 					= traits[i].id;
 					m_TraitAcquisitions[ID] = traits[i].get("acquisition").id;
@@ -65,21 +61,26 @@ gw2traits = function() {
 						//TraitList += " at " + MapName;
 					}
 
-					//Close
-					/*TraitList += ' <input id=trait-check_"' + ID + '" value="' + ID + '" type="checkbox" onclick="gw2traits.handleTraitClick(this)"';
-					if (m_TraitUnlocks[ID]) TraitList += ' checked="checked"';
-					TraitList += '></li>';*/
+					//If opener
+					if (Column == 0) TraitList += '<div class="trait-row">';
+					if (Column == 0 || Column == TierCounts[0] || Column == TierCounts[1]) TraitList += '<div class="trait-box">';
+
+					//Set div
+					var Content		= m_TraitUnlocks[ID] ? " " : "";
+					var ImageFile 	= "images/trait-4-" + (m_TraitUnlocks[ID] ? "unlocked" : "locked") + ".png";
+		  			TraitList += '<div id="trait_' + ID + '" class="trait-icon tooltip" onclick="gw2traits.handleTraitClick(this)" style="background-image: url(' + ImageFile + ');" title="A tooltip">' + Content + '</div>';
 
 					//Next column
 					Column++;
 
-					//Close
+					//if closer
 					if (Column == TierCounts[0] || Column == TierCounts[1] || Column == TierCounts[2]) TraitList += '</div>';
 					if (Column == TierCounts[2]) TraitList += '</div>';
 				}
 
 				//Write stuff
 				document.getElementById('trait-panel').insertAdjacentHTML("beforeend", TraitList);
+				if (m_TooltipHandler != null) m_TooltipHandler();
 				refreshMaps();
 			}
 		});
@@ -246,7 +247,6 @@ gw2traits = function() {
 				//Extend string
 				MapList += '<li class="map-item' + (i < 3 ? (i + 1) : '') + '">' + MapName + " (" + Count + " trait" + (Count > 1 ? 's' : '') + ")</li>";
 			}
-			//<li class="map-item1">Eternal Battleground (4 traits)</li>
 		}
 
 		//Write
@@ -259,10 +259,16 @@ gw2traits = function() {
 		if (element == null) return;
 
 		//Change data
-		m_TraitUnlocks[element.value] = element.checked;
+		var ID 				= element.id.substr("trait_".length);
+		var Value 			= element.innerHTML.length > 0; 
+		m_TraitUnlocks[ID] 	= !Value
 		saveCookies();
 
-		//Refresh
+		//Refresh element
+		element.innerHTML = m_TraitUnlocks[ID] ? " " : "";
+		element.setAttribute("style", "background-image: url(images/trait-4-" + (m_TraitUnlocks[ID] ? "unlocked" : "locked") + ".png);");
+
+		//Recalculate map
 		refreshMaps();
 	}
 

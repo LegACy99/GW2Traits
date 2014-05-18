@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-	  <meta charset="utf-8">
+		<meta charset="utf-8">
 
-	  <title>GW2Traits - Guild Wars 2 Trait Tracker</title>
-	  <meta name="description" content="My Parse App">
-	  <meta name="viewport" content="width=device-width">
-	  <link rel="stylesheet" href="css/reset.css">
-	  <link rel="stylesheet" href="css/styles.css">
-	  <link rel="stylesheet" href="css/tooltipster.css">
-  	</head>
-  	<body>
-  		<!-- Header -->
-  		<div class="header">
-  			<div class="header-image"></div>
-  			<div class="header-text">Guild Wars 2 Trait Tracker</div>
-  		</div>
+		<title>GW2Traits - Guild Wars 2 Trait Tracker</title>
+		<meta name="description" content="My Parse App">
+		<meta name="viewport" content="width=device-width">
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/styles.css">
+		<link rel="stylesheet" href="css/tooltipster.css">
+	</head>
+	<body>
+		<!-- Header -->
+		<div class="header">
+			<div class="header-image"></div>
+			<div class="header-text">Guild Wars 2 Trait Tracker</div>
+		</div>
 
-  		<!-- Content -->
-  		<div class="content">
-  			<!-- Traits -->
-	  		<div class="trait-panel" id="trait-panel">
-  				<!-- Trait header -->
-	  			<div class="panel-header">
+		<!-- Content -->
+		<div class="content">
+			<!-- Traits -->
+	  		<div id="trait-panel" class="trait-panel">
+				<!-- Trait header -->
+ 				<div class="panel-header">
 	  				<div class="trait-title"><b>Traits</b></div>
 	  				<div class="trait-buttons">
 		  				<input class="trait-button" type="button" value="Lock all traits" />
@@ -31,7 +31,7 @@
 	  			</div>
 
 		  		<!-- List of traits -->
-		  		<!--<div class="trait-row">
+		  		<!-- <div class="trait-row">
 		  			<div class="trait-box">
 				  		<div class="trait-icon tooltip" style="background-image: url(trait.png);" title="A tooltip"></div>
 				  		<div class="trait-icon tooltip" style="background-image: url(trait.png);" title="A tooltip"></div>
@@ -51,7 +51,7 @@
 				  		<div class="trait-icon tooltip" style="background-image: url(trait.png);" title="A tooltip"></div>
 				  		<div class="trait-icon tooltip" style="background-image: url(trait.png);" title="A tooltip"></div>
 				  	</div>
-			  	</div>-->
+			  	</div> -->
 			</div>
 
 			<div class="map-panel">
@@ -62,7 +62,7 @@
 
 	  			<!-- Map list -->
 				<div class="map-list">
-					<ul class="map-ul" id="map-ul">
+					<ul id="map-ul" class="map-ul">
 						<!--<li class="map-item1">Eternal Battleground (4 traits)</li>
 						<li class="map-item2">Cursed Shore (6 traits)</li>
 						<li class="map-item3">Fireheart Rise (4 traits)</li>
@@ -83,7 +83,7 @@
 					    	<option value="80">80</option>
 					    </select>
 					</div>
-					<div class="type-config" id="type-config">
+					<div id="type-config" class="type-config">
 						<b>Types</b><br />
 						<!--<div class="type-config-left">
 							<label><input type="checkbox" checked="checked"> Type 1</label><br />
@@ -108,25 +108,24 @@
 		</footer>
 
 	    <!-- Load and run scripts -->
-	  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
-	  <script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
-	  <script type="text/javascript" src="js/gw2traits.js"></script>
+	  	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	  	<script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+	  	<script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
+	  	<script type="text/javascript" src="js/gw2traits.js"></script>
 
-	  <!-- Run javascript -->
-	  <script>	  	
-		//Prepare content
-		gw2traits.initialize();
-	  	gw2traits.loadTraits();
-	  	gw2traits.loadAcquisitionTypes();
+	  	<!-- Run javascript -->
+	  	<script>	  	
+			//Initialize
+			gw2traits.initialize(function() {
+	            $('.tooltip').tooltipster({
+	            	delay: 100,
+	            	speed: 180
+	            });
+			});
 
-	  	//When ready, run tooltipster
-        /*$(document).ready(function() {
-            $('.tooltip').tooltipster({
-            	delay: 100,
-            	speed: 180
-            });
-        });*/
-      </script>
+			//Load contents
+		  	gw2traits.loadTraits();
+		  	gw2traits.loadAcquisitionTypes();
+      	</script>
   	</body>
 </html>

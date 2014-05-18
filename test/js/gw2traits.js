@@ -21,11 +21,32 @@ gw2traits = function() {
 		TraitQuery.include("map");
 		TraitQuery.find({
 			success: function(traits) {
+				//Initialize
+				var Tier 		= 0;
+				var Column		= 0;
+				var TraitList 	= "";
+				var TierCounts	= [ 6, 10, 13 ];
+
 				//For each result
-				var TraitList = "";
 				for (var i = 0; i < traits.length; i++) {
-					//Start trait item list
-					TraitList += '<li>Trait ' + traits[i].get("line") + '-' + traits[i].get("number");
+					//Check tier
+					if (Column >= TierCounts[Tier]) {
+						//Increase tier
+						Tier++;
+						if (Tier >= TierCounts.length) {
+							//Reset
+							Tier 	= 0;
+							Column	= 0;
+						}
+					}
+
+					//Open
+					if (Column == 0) TraitList += '<div class="trait-row">';
+					if (Column == 0 || Column == TierCounts[0] || Column == TierCounts[1]) TraitList += '<div class="trait-box">';
+
+					//Start
+					//TraitList += '<li>Trait ' + traits[i].get("line") + '-' + traits[i].get("number");
+		  			TraitList += '<div class="trait-icon" style="background-image: url(trait.png);" title="A tooltip"></div>';
 
 					//Set up data
 					var ID 					= traits[i].id;
@@ -41,17 +62,24 @@ gw2traits = function() {
 						m_TraitMaps[ID] 		= MapName;
 
 						//Extend string
-						TraitList += " at " + MapName;
+						//TraitList += " at " + MapName;
 					}
 
 					//Close
-					TraitList += ' <input id=trait-check_"' + ID + '" value="' + ID + '" type="checkbox" onclick="gw2traits.handleTraitClick(this)"';
+					/*TraitList += ' <input id=trait-check_"' + ID + '" value="' + ID + '" type="checkbox" onclick="gw2traits.handleTraitClick(this)"';
 					if (m_TraitUnlocks[ID]) TraitList += ' checked="checked"';
-					TraitList += '></li>';
+					TraitList += '></li>';*/
+
+					//Next column
+					Column++;
+
+					//Close
+					if (Column == TierCounts[0] || Column == TierCounts[1] || Column == TierCounts[2]) TraitList += '</div>';
+					if (Column == TierCounts[2]) TraitList += '</div>';
 				}
 
 				//Write stuff
-				document.getElementById('traits').innerHTML = TraitList;
+				document.getElementById('trait-panel').insertAdjacentHTML("beforeend", TraitList);
 				refreshMaps();
 			}
 		});
@@ -63,21 +91,29 @@ gw2traits = function() {
 		var AcquisitionQuery	= new Parse.Query(AcquisitionObject);
 		AcquisitionQuery.find({
 			success: function(acquisitions) {
-				//For each type
+				//Initialize 
 				var FilterText = "";
+
+				//For each type
 				for (var i = 0; i < acquisitions.length; i++) {
 					//Get ID
 					var ID 	= acquisitions[i].id;
-					if (m_Acquisitions[ID] == null) m_Acquisitions[ID]	= true; 
+					if (m_Acquisitions[ID] == null) m_Acquisitions[ID]	= true;
+
+					//Opens
+					if (i % 3 == 0) FilterText += '<div class="type-config-' + (i == 0 ? "left" : "right") + '">';
 
 					//Set text
 					FilterText += '<label><input type="checkbox" onclick="gw2traits.handleAcquisitionClick(this)"';
 					if (m_Acquisitions[ID]) FilterText += ' checked="checked"';
 					FilterText += ' id=acquisition-check_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
+
+					//Close
+					if (i % 3 == 2) FilterText += '</div>';
 				}
 
 				//Write
-				document.getElementById('acquisition-filter').innerHTML = FilterText;
+				document.getElementById('type-config').insertAdjacentHTML("beforeend", FilterText);
 			}
 		});
 	}
@@ -208,12 +244,13 @@ gw2traits = function() {
 			var Count 	= m_MapCount[MapName];
 			if (Count != null && Count > 0) {
 				//Extend string
-				MapList += "<li>" + MapName + " - " + Count + "</li>";
+				MapList += '<li class="map-item' + (i < 3 ? (i + 1) : '') + '">' + MapName + " (" + Count + " trait" + (Count > 1 ? 's' : '') + ")</li>";
 			}
+			//<li class="map-item1">Eternal Battleground (4 traits)</li>
 		}
 
 		//Write
-		document.getElementById('maps').innerHTML = MapList;
+		document.getElementById('map-ul').innerHTML = MapList;
 	}
 
 	//Trait checkbox click

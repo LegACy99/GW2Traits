@@ -9,21 +9,6 @@
 	  <link rel="stylesheet" href="css/reset.css">
 	  <link rel="stylesheet" href="css/styles.css">
 	  <link rel="stylesheet" href="css/tooltipster.css">
-
-	    <!-- Load JS -->
-	  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
-	  <script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
-
-	  <!-- Run Tooltipster -->
-	  <script>
-        $(document).ready(function() {
-            $('.tooltip').tooltipster({
-            	delay: 100,
-            	speed: 180
-            });
-        });
-    </script>
   	</head>
   	<body>
   		<!-- Header -->
@@ -212,5 +197,27 @@
 		        <div class="footer-text">&copy; Raka Mahesa 2014</div>
 	    	</div>
 		</footer>
+
+	    <!-- Load and run scripts -->
+	  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+	  <script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
+	  <script type="text/javascript" src="js/gw2traits.js"></script>
+
+	  <!-- Run javascript -->
+	  <script>	  	
+		//Prepare content
+		gw2traits.initialize();
+	  	gw2traits.loadTraits();
+	  	gw2traits.loadAcquisitionTypes();
+
+	  	//When ready, run tooltipster
+        $(document).ready(function() {
+            $('.tooltip').tooltipster({
+            	delay: 100,
+            	speed: 180
+            });
+        });
+      </script>
   	</body>
 </html>

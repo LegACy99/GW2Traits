@@ -21,25 +21,21 @@ footer {
 
 .header {
     margin-top: 12px;
-    margin-bottom: 18px;
-    background-color:#0CF;
+    margin-bottom: 24px;
+    text-align: center;
 }
 
 .header-image {
-    width: 120px;
-    height: 120px;
-    margin-left: 4px;
-    display: inline-block;
-    background-color: red;
+    margin-left: -16px;
+    margin-right: 26px;
 }
 
 .header-text {
-    font-size: 280%;
-    margin-left: 4px;
-    margin-bottom: 12px;
-    vertical-align: bottom;
-    background-color: pink;
+    font-size: 350%;
+    font-weight: bold;
+    vertical-align: middle;
     display: inline-block;
+    margin-top: 4px;
 }
 
 .footer-text {

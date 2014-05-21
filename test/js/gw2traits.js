@@ -1,19 +1,21 @@
+/*jshint eqnull:true */
+
 gw2traits = function() {
 	//Class variables
 	var m_Traits			= {};
-	var m_MapCount 			= {};
+	var m_MapCount			= {};
 	var m_MapLevels			= {};
 	var m_Acquisitions		= {};
 	var m_MaxLevel			= 80;
 	var m_TooltipHandler	= function(){};
 
 	//Constants
-	var TRAIT_MAP 			= "map";
+	var TRAIT_MAP			= "map";
 	var TRAIT_NUMBER		= "number";
 	var TRAIT_UNLOCK		= "unlocked";
 	var TRAIT_ACQUISITION	= "acquisition";
-	var COOKIE_START 		= "cookie=";
-	var ELEMENT_TRAIT_ID 	= "trait_";
+	var COOKIE_START		= "cookie=";
+	var ELEMENT_TRAIT_ID	= "trait_";
 
 	//Initialize stuff
 	var initialize = function(tooltip) {
@@ -29,15 +31,16 @@ gw2traits = function() {
 	var loadTraits = function() {
 		//Query all traits
 		var TraitObject = Parse.Object.extend("Trait");
-		var TraitQuery	= new Parse.Query(TraitObject);	
+		var TraitQuery	= new Parse.Query(TraitObject);
 		TraitQuery.ascending("createdAt");
 		TraitQuery.include("map");
+		TraitQuery.include("acquisition");
 		TraitQuery.find({
 			success: function(traits) {
 				//Initialize
-				var Tier 		= 0;
+				var Tier		= 0;
 				var Column		= 0;
-				var TraitList 	= "";
+				var TraitList	= "";
 				var TierCounts	= [ 6, 10, 13 ];
 
 				//For each result
@@ -48,7 +51,7 @@ gw2traits = function() {
 						Tier++;
 						if (Tier >= TierCounts.length) {
 							//Reset
-							Tier 	= 0;
+							Tier	= 0;
 							Column	= 0;
 						}
 					}
@@ -58,7 +61,6 @@ gw2traits = function() {
 					if (m_Traits[ID] == null) m_Traits[ID] = {};
 
 					//Save data
-					console.log("line " + traits[i].get("line") + " number " + traits[i].get("number"));
 					m_Traits[ID][TRAIT_NUMBER]		= traits[i].get("number");
 					m_Traits[ID][TRAIT_ACQUISITION] = traits[i].get(TRAIT_ACQUISITION).id;
 					if (m_Traits[ID][TRAIT_UNLOCK] == null) m_Traits[ID][TRAIT_UNLOCK] = false;
@@ -67,7 +69,7 @@ gw2traits = function() {
 					var Map = traits[i].get("map");
 					if (Map != null) {
 						//Save
-						var MapName 			= Map.get("name");
+						var MapName				= Map.get("name");
 						m_MapLevels[MapName]	= Map.get("minLevel");
 						m_Traits[ID][TRAIT_MAP] = MapName;
 
@@ -76,19 +78,19 @@ gw2traits = function() {
 					}
 
 					//If opener
-					if (Column == 0) TraitList += '<div class="trait-row">';
-					if (Column == 0 || Column == TierCounts[0] || Column == TierCounts[1]) TraitList += '<div class="trait-box">';
+					if (Column === 0) TraitList += '<div class="trait-row">';
+					if (Column === 0 || Column === TierCounts[0] || Column === TierCounts[1]) TraitList += '<div class="trait-box">';
 
 					//Set div
 					var Content	= m_Traits[ID][TRAIT_UNLOCK] ? " " : "";
-		  			TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon tooltip" onclick="gw2traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '" title="A tooltip">' + Content + '</div>';
+					TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon tooltip" onclick="gw2traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '" title="A tooltip">' + Content + '</div>';
 
 					//Next column
 					Column++;
 
 					//if closer
-					if (Column == TierCounts[0] || Column == TierCounts[1] || Column == TierCounts[2]) TraitList += '</div>';
-					if (Column == TierCounts[2]) TraitList += '</div>';
+					if (Column === TierCounts[0] || Column === TierCounts[1] || Column === TierCounts[2]) TraitList += '</div>';
+					if (Column === TierCounts[2]) TraitList += '</div>';
 				}
 
 				//Write stuff
@@ -97,12 +99,12 @@ gw2traits = function() {
 				refreshMaps();
 			}
 		});
-	}
+	};
 
 	//Load acquisition types from database
 	var loadAcquisitionTypes = function() {
 		//Query all acquisition
-		var AcquisitionObject 	= Parse.Object.extend("Acquisition");
+		var AcquisitionObject	= Parse.Object.extend("Acquisition");
 		var AcquisitionQuery	= new Parse.Query(AcquisitionObject);
 		AcquisitionQuery.find({
 			success: function(acquisitions) {
@@ -112,11 +114,11 @@ gw2traits = function() {
 				//For each type
 				for (var i = 0; i < acquisitions.length; i++) {
 					//Get ID
-					var ID 	= acquisitions[i].id;
-					if (m_Acquisitions[ID] == null) m_Acquisitions[ID]	= true;
+					var ID = acquisitions[i].id;
+					if (m_Acquisitions[ID] == null) m_Acquisitions[ID] = true;
 
 					//Opens
-					if (i % 3 == 0) FilterText += '<div class="type-config-' + (i == 0 ? "left" : "right") + '">';
+					if (i % 3 === 0) FilterText += '<div class="type-config-' + (i === 0 ? "left" : "right") + '">';
 
 					//Set text
 					FilterText += '<label><input type="checkbox" onclick="gw2traits.handleAcquisitionClick(this)"';
@@ -124,14 +126,14 @@ gw2traits = function() {
 					FilterText += ' id=acquisition-check_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
 
 					//Close
-					if (i % 3 == 2) FilterText += '</div>';
+					if (i % 3 === 2) FilterText += '</div>';
 				}
 
 				//Write
 				document.getElementById('type-config').insertAdjacentHTML("beforeend", FilterText);
 			}
 		});
-	}
+	};
 
 	var loadCookies = function() {
 		//Get cookie
@@ -144,9 +146,10 @@ gw2traits = function() {
 				var Cookie = JSON.parse(decodeURI(RawJSON));
 
 				//Get trait
+				var i = 0;
 				if (Cookie.traits != null) {
 					//For each trait
-					for (var i = 0; i < Cookie.traits.length; i++) {
+					for (i = 0; i < Cookie.traits.length; i++) {
 						//Set
 						if (m_Traits[Cookie.traits[i]] == null) m_Traits[Cookie.traits[i]] = {};
 						m_Traits[Cookie.traits[i]][TRAIT_UNLOCK] = true;
@@ -156,7 +159,7 @@ gw2traits = function() {
 				//Get acquisition filter
 				if (Cookie.acquisitions != null) {
 					//For each acquisition type
-					for (var i = 0; i < Cookie.acquisitions.length; i++) m_Acquisitions[Cookie.acquisitions[i]] = false;
+					for (i = 0; i < Cookie.acquisitions.length; i++) m_Acquisitions[Cookie.acquisitions[i]] = false;
 				}
 
 				//Get max level
@@ -164,7 +167,7 @@ gw2traits = function() {
 				document.getElementById("level-filter").value = m_MaxLevel;
 			}
 		}
-	}
+	};
 
 	var saveCookies = function() {
 		//Initialize object
@@ -175,13 +178,13 @@ gw2traits = function() {
 		};
 
 		//Populate
-		for (var ID in m_Acquisitions) 	if (!m_Acquisitions[ID]) Cookie.acquisitions.push(ID);
+		for (var ID in m_Acquisitions)	if (!m_Acquisitions[ID]) Cookie.acquisitions.push(ID);
 		for (var Trait in m_Traits)		if (m_Traits[Trait][TRAIT_UNLOCK]) Cookie.traits.push(Trait);
 
 		//Write
 		var JSONText = encodeURI(JSON.stringify(Cookie));
 		document.cookie = COOKIE_START + JSONText + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-	}
+	};
 
 	var getTraitStyle = function(id) {
 		//Initialize
@@ -196,7 +199,7 @@ gw2traits = function() {
 
 		//Return
 		return Style;
-	}
+	};
 
 	//Set trait unlocking status
 	var setTraitUnlock = function(id, unlocked) {
@@ -204,8 +207,8 @@ gw2traits = function() {
 		if (id == null) return;
 
 		//Initialize
-		var Trait 		= m_Traits[id];
-		var Unlocked 	= Boolean(unlocked);
+		var Trait		= m_Traits[id];
+		var Unlocked	= Boolean(unlocked);
 		var Changed		= false;
 
 		//If trait exist
@@ -229,7 +232,7 @@ gw2traits = function() {
 
 		//Return
 		return Changed;
-	}
+	};
 
 	//Set all trait unlocking status
 	var setAllTraitsUnlock = function(unlocked) {
@@ -243,7 +246,7 @@ gw2traits = function() {
 			saveCookies();
 			refreshMaps();
 		}
-	}
+	};
 
 	//Refresh map
 	var refreshMaps = function() {
@@ -253,7 +256,7 @@ gw2traits = function() {
 		//Sort and display
 		var Maps = sortMaps();
 		displayMaps(Maps);
-	}
+	};
 
 	//Calculate map count
 	var countMaps = function() {
@@ -263,7 +266,7 @@ gw2traits = function() {
 		//For all traits
 		for (var Trait in m_Traits) {
 			//Validate map and trait
-			var Map 	= m_Traits[Trait][TRAIT_MAP];
+			var Map		= m_Traits[Trait][TRAIT_MAP];
 			var Valid	= Map != null;
 			if (Valid) Valid = !m_Traits[Trait][TRAIT_UNLOCK];
 
@@ -284,11 +287,11 @@ gw2traits = function() {
 			//If valid
 			if (Valid) {
 				//Add to count
-				if (m_MapCount[Map] == null) 	m_MapCount[Map] = 1;
-				else 							m_MapCount[Map]++;
+				if (m_MapCount[Map] == null)	m_MapCount[Map] = 1;
+				else							m_MapCount[Map]++;
 			}
 		}
-	}
+	};
 
 	//Sort maps from map count
 	var sortMaps = function() {
@@ -304,13 +307,13 @@ gw2traits = function() {
 				if (Index < 0) Index = Sorted.length;
 
 				//Insert at index
-				Sorted.splice(Index, 0, Name); 
+				Sorted.splice(Index, 0, Name);
 			}
 		}
 
 		//Return sorted map
 		return Sorted;
-	}
+	};
 
 	//Display maps
 	var displayMaps = function(maps) {
@@ -322,7 +325,7 @@ gw2traits = function() {
 		for (var i = 0; i < maps.length; i++) {
 			//Get data
 			var MapName = maps[i];
-			var Count 	= m_MapCount[MapName];
+			var Count	= m_MapCount[MapName];
 			if (Count != null && Count > 0) {
 				//Extend string
 				MapList += '<li class="map-item' + (i < 3 ? (i + 1) : '') + '">' + MapName + " (" + Count + " trait" + (Count > 1 ? 's' : '') + ")</li>";
@@ -331,7 +334,7 @@ gw2traits = function() {
 
 		//Write
 		document.getElementById('map-ul').innerHTML = MapList;
-	}
+	};
 
 	//Trait checkbox click
 	var handleTraitClick = function(element) {
@@ -339,8 +342,8 @@ gw2traits = function() {
 		if (element == null) return;
 
 		//Get data
-		var ID 		= element.id.substr(ELEMENT_TRAIT_ID.length);
-		var Value 	= element.innerHTML.length > 0;
+		var ID		= element.id.substr(ELEMENT_TRAIT_ID.length);
+		var Value	= element.innerHTML.length > 0;
 
 		//Set unlocking
 		if (setTraitUnlock(ID, !Value)) {
@@ -348,7 +351,7 @@ gw2traits = function() {
 			saveCookies();
 			refreshMaps();
 		}
-	}
+	};
 
 	//Filter checkbox click
 	var handleAcquisitionClick = function(element) {
@@ -361,7 +364,7 @@ gw2traits = function() {
 
 		//Refresh
 		refreshMaps();
-	}
+	};
 
 	//Level dropdown click
 	var handleLevelChange = function(element) {
@@ -369,15 +372,15 @@ gw2traits = function() {
 		if (element == null) return;
 
 		//Get level
-		m_MaxLevel = parseInt(element.value);
+		m_MaxLevel = parseInt(element.value, 10);
 		saveCookies();
 
 		//Refresh
 		refreshMaps();
-	}
+	};
 
 	//Return public members
-	return { 
+	return {
 		initialize: initialize,
 		loadTraits: loadTraits,
 		loadAcquisitionTypes: loadAcquisitionTypes,

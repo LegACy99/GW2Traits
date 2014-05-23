@@ -328,7 +328,7 @@ gw2traits = function() {
 			var Count	= m_MapCount[MapName];
 			if (Count != null && Count > 0) {
 				//Extend string
-				MapList += '<li class="map-item' + (i < 3 ? (i + 1) : '') + '">' + MapName + " (" + Count + " trait" + (Count > 1 ? 's' : '') + ")</li>";
+				MapList += '<li class="map-item' + (i < 3 ? (" item" + (i + 1)) : '') + '">' + MapName + " (" + Count + " trait" + (Count > 1 ? 's' : '') + ")</li>";
 			}
 		}
 

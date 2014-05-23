@@ -47,38 +47,45 @@ footer {
     background-color: #CCCCCC;
 }
 
-.trait-panel {
-    background-color: #FFCCCC;
+.panel {
+    border-width: 1px;
+    border-style: solid;
     display: inline-block;
-    margin-right: 8px;
+}
+
+#trait-panel {
+    min-widtha: 600px;
 }
 
 .panel-header {
-    margin-top: 8px;
-    margin-left: 8px;
-    margin-right: 8px;
-    background-colora: yellow;
+    padding-top: 6px;
+    padding-left: 8px;
+    padding-bottom: 6px;
+    background-color: #333333;
     position: relative;
+    color: #EEEEEE;
 }
 
-.trait-title {
+.panel-title {
+    margin-left: 2px;
+    background-colora: pink;
+    display: inline-block;
+    font-weight: bold;
     font-size: 150%;
-    margin-left: 3px;
-    margin-bottom: -3px;
-    background-colora: cyan; 
-    position: absolute;
-    bottom: 0;
 }
 
 .trait-buttons {
-    text-align: right;
-    background-colora: blue;
+    right: 4px;
+    position: absolute;
+    display: inline-block;
+    background-colora: yellow;
 }
 
 .trait-button {
     width: 140px;
+    height: 34px;
     padding: 4px 0px;
-    margin-left: 8px;
+    margin-left: 4px;
 }
 
 .trait-row {
@@ -101,16 +108,9 @@ footer {
     margin-left: 4px;
 }
 
-.map-panel {
-    padding: 4px;
-    background-color: #CCCCFF;
-    display: inline-block;
+#map-panel {
     vertical-align: top;
-}
-
-.map-title {
-    font-size: 150%;
-    background-colora: orange;
+    background-colora: #CCCCFF;    
 }
 
 .map-list {

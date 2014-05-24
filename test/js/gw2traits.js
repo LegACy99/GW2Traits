@@ -38,6 +38,7 @@ gw2traits = function() {
 		TraitQuery.find({
 			success: function(traits) {
 				//Initialize
+				var Row			= 0;
 				var Tier		= 0;
 				var Column		= 0;
 				var TraitList	= "";
@@ -77,9 +78,16 @@ gw2traits = function() {
 						//TraitList += " at " + MapName;
 					}
 
-					//If opener
-					if (Column === 0) TraitList += '<div class="trait-row">';
-					if (Column === 0 || Column === TierCounts[0] || Column === TierCounts[1]) TraitList += '<div class="trait-box">';
+					//If first column
+					if (Column === 0) {
+						//Start row
+						Row++;
+						TraitList += '<div class="trait-row row' + Row + '">';
+					}
+
+					//If starting box
+					var Box = Column === 0 ? 1 : Column == TierCounts[0] ? 2 : Column == TierCounts[1] ? 3 : 0;
+					if (Box > 0) TraitList += '<div class="trait-box box' + Box + '">';
 
 					//Set div
 					var Content	= m_Traits[ID][TRAIT_UNLOCK] ? " " : "";

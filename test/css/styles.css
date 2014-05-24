@@ -8,8 +8,8 @@ body {
     margin-right: auto;
     margin-bottom: 60px;
     background-color: #F0F0F0;
-    max-width: 1040px;
-    color: #111111;
+    max-width: 1088px;
+    color: #222222;
 }
 
 footer {
@@ -22,7 +22,7 @@ footer {
 
 .header {
     margin-top: 12px;
-    margin-bottom: 40px;
+    margin-bottom: 26px;
     text-align: center;
 }
 
@@ -45,25 +45,19 @@ footer {
 }
 
 .panel {
-    border-width: 1px;
-    border-style: solid;
     display: inline-block;
-    background-color: #DDDDDD;
-    border-color: #111111;
 }
 
 #trait-panel {
     min-widtha: 600px;
-    margin-right: 16px;
+    margin-right: 32px;
 }
 
 .panel-header {
     padding-top: 6px;
     padding-left: 8px;
-    padding-bottom: 6px;
-    background-color: #111111;
+    padding-bottom: 2px;
     position: relative;
-    color: #EEEEEE;
 }
 
 .panel-title {
@@ -76,7 +70,7 @@ footer {
 
 .trait-buttons {
     right: 4px;
-    margin-top: -1px;
+    margin-top: -6px;
     position: absolute;
     display: inline-block;
     background-colora: yellow;
@@ -85,19 +79,30 @@ footer {
 .trait-button {
     width: 140px;
     height: 34px;
-    padding: 4px 0px;
+    padding: 4px 0;
     margin-left: 4px;
 }
 
 .trait-row {
-    margin: 10px 0px;
+    padding: 8px;
+    border-top-style: solid;
+    border-top-width: 1px;
+}
+
+.row1 {
+    padding-top: 10px;
 }
 
 .trait-box {
-    margin: 0px 5px;
-    padding: 6px 4px;
-    background-color: #CC6600;
+    padding: 8px 6px;
+    margin-left: 20px;
     display: inline-block;
+    background-color: #222222;
+    border-radius: 5px;
+}
+
+.box1 {
+    margin-left: 0;
 }
 
 .trait-icon {
@@ -115,13 +120,17 @@ footer {
 
 .map-list {
     width: 360px;
-    height: 211px;
+    height: 248px;
     overflow: auto;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
 }
 
 .map-ul {
     list-style: none;
-    margin-top: 10px;
+    margin-top: 0;
     margin-bottom: 6px;
     padding-right: 2px;
     padding-left: 2px;
@@ -163,12 +172,10 @@ footer {
 }
 
 .map-config {
-    padding-top: 8px;
+    padding-top: 10px;
     padding-left: 6px;
     padding-bottom: 5px;
     position: relative;
-    background-color: #111111;
-    color: #EEEEEE;
 }
 
 #level-filter {

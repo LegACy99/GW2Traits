@@ -6,18 +6,19 @@ html {
 body {
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 60px;
+    margin-bottom: 56px;
     background-color: #F0F0F0;
     max-width: 1088px;
+    min-width: 1088px;
     color: #222222;
 }
 
 footer {
+    max-width: 1088px;
     position: absolute;
-    height: 60px;
+    height: 56px;
     width: 100%;
     bottom: 0;
-    left: 0;
 }
 
 .header {
@@ -39,9 +40,16 @@ footer {
     margin-top: 4px;
 }
 
-.footer-text {
-    text-align: center;
-    margin-top: -5px;
+.footer-text-left {
+    float: left;
+    margin-left: 8px;
+    margin-top: -7px;
+}
+
+.footer-text-right {
+    float: right;
+    margin-right: 8px;
+    margin-top: -7px;
 }
 
 .panel {
@@ -49,7 +57,7 @@ footer {
 }
 
 #trait-panel {
-    min-widtha: 600px;
+    min-width: 680px;
     margin-right: 32px;
 }
 
@@ -58,6 +66,8 @@ footer {
     padding-left: 8px;
     padding-bottom: 2px;
     position: relative;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
 }
 
 .panel-title {
@@ -91,6 +101,7 @@ footer {
 
 .row1 {
     padding-top: 10px;
+    border-top-style: none;
 }
 
 .trait-box {
@@ -122,10 +133,8 @@ footer {
     width: 360px;
     height: 248px;
     overflow: auto;
-    border-top-style: solid;
     border-bottom-style: solid;
     border-bottom-width: 1px;
-    border-top-width: 1px;
 }
 
 .map-ul {

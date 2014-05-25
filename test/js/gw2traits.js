@@ -72,12 +72,9 @@ gw2traits = function() {
 					if (Map != null) {
 						//Save
 						var MapName				= Map.get("name");
-						m_MapLinks[MapName]	= Map.get("wiki");
+						m_MapLinks[MapName]		= Map.get("wiki");
 						m_MapLevels[MapName]	= Map.get("minLevel");
 						m_Traits[ID][TRAIT_MAP] = MapName;
-
-						//Extend string
-						//TraitList += " at " + MapName;
 					}
 
 					//If first column
@@ -91,9 +88,14 @@ gw2traits = function() {
 					var Box = Column === 0 ? 1 : Column == TierCounts[0] ? 2 : Column == TierCounts[1] ? 3 : 0;
 					if (Box > 0) TraitList += '<div class="trait-box box' + Box + '">';
 
+					//Create tool tip
+					var Unlock			= traits[i].get("unlocking").replace(/"/g, '&quot;');
+					var TooltipLabel 	= Map != null ? m_Traits[ID][TRAIT_MAP] : traits[i].get(TRAIT_ACQUISITION).get("name");
+					var Tooltip 		= '&lt;div class=&quot;tooltip-unlock&quot;&gt;' + Unlock + '&lt;/div&gt;&lt;div class=&quot;tooltip-map&quot;&gt;' + TooltipLabel + ' &lt;/div&gt;';
+
 					//Set div
 					var Content	= m_Traits[ID][TRAIT_UNLOCK] ? " " : "";
-					TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon tooltip" onclick="gw2traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '" title="A tooltip">' + Content + '</div>';
+					TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon tooltip" onclick="gw2traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '" title="' + Tooltip + '">' + Content + '</div>';
 
 					//Next column
 					Column++;

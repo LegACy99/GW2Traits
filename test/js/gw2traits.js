@@ -3,6 +3,7 @@
 gw2traits = function() {
 	//Class variables
 	var m_Traits			= {};
+	var m_MapLinks			= {};
 	var m_MapCount			= {};
 	var m_MapLevels			= {};
 	var m_Acquisitions		= {};
@@ -71,6 +72,7 @@ gw2traits = function() {
 					if (Map != null) {
 						//Save
 						var MapName				= Map.get("name");
+						m_MapLinks[MapName]	= Map.get("wiki");
 						m_MapLevels[MapName]	= Map.get("minLevel");
 						m_Traits[ID][TRAIT_MAP] = MapName;
 
@@ -332,11 +334,15 @@ gw2traits = function() {
 		var MapList = "";
 		for (var i = 0; i < maps.length; i++) {
 			//Get data
+			var Wiki	= "";
 			var MapName = maps[i];
 			var Count	= m_MapCount[MapName];
+
+			//If have a count
 			if (Count != null && Count > 0) {
 				//Extend string
-				MapList += '<li class="map-item' + (i < 3 ? (" item" + (i + 1)) : '') + '">' + MapName + " (" + Count + " trait" + (Count > 1 ? 's' : '') + ")</li>";
+				if (m_MapLinks[MapName] != null) Wiki = ' href="' + m_MapLinks[MapName] + '" title="' + MapName + ' - Guild Wars 2 Wiki" target="_blank"';
+				MapList += '<li><a class="map-item' + (i < 3 ? (" item" + (i + 1)) : '') + '"' + Wiki + '>' + MapName + " (" + Count + " trait" + (Count > 1 ? 's' : '') + ")</a></li>";
 			}
 		}
 

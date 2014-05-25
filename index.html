@@ -1,319 +1,106 @@
-<!doctype html>
-<head>
-  <meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
 
-  <title>My Parse App</title>
-  <meta name="description" content="My Parse App">
-  <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/styles.css">
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
-</head>
+		<title>GW2Traits - Guild Wars 2 Trait Tracker</title>
+		<meta name="author" content="Raka Mahesa">
+		<meta name="viewport" content="width=device-width">
+		<meta name="description" content="An online trait tracker for Guild Wars 2">
+		<link rel="stylesheet" type="text/css" media="all" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" media="all" href="css/styles.css">
+		<link rel="stylesheet" type="text/css" media="all" href="css/tooltipster.css">
+	</head>
+	<body>
+		<!-- Header -->
+		<div class="header">
+			<img src="images/logo.png" alt="Guild Wars 2" class="header-image"></img><span class="header-text">Guild Wars 2 Trait Tracker</span>
+		</div>
 
-<body>
-  
-  <div id="main">
-    <h1>You're ready to use Parse!</h1>
+		<!-- Content -->
+		<div class="content">
+			<!-- Traits -->
+	  		<div class="panel" id="trait-panel">
+				<!-- Trait header -->
+ 				<div class="panel-header">
+	  				<div class="panel-title" id="trait-title">Traits</div>
+	  				<div class="trait-buttons">
+		  				<input class="trait-button" type="button" value="Lock all traits" onclick="gw2traits.setAllTraitsUnlock(false)" />
+		  				<input class="trait-button" type="button" value="Unlock all traits" onclick="gw2traits.setAllTraitsUnlock(true)" />
+	  				</div>
+	  			</div>
 
-    <p>Read the documentation and start building your JavaScript app:</p>
+	  			<!-- Traits menu -->
+			</div>
 
-    <ul>
-      <li><a href="https://www.parse.com/docs/js_guide">Parse JavaScript Guide</a></li>
-      <li><a href="https://www.parse.com/docs/js">Parse JavaScript API Documentation</a></li>
-    </ul>
+			<div class="panel" id="map-panel">
+  				<!-- Map header -->
+	  			<div class="panel-header" id="map-header">
+	  				<div class="panel-title" id="map-title">Maps</div>
+	  			</div>
 
-    <ul id="traits"></ul>
+	  			<!-- Map list -->
+				<div class="map-list"><ul id="map-ul" class="map-ul"></ul></div>
 
-    <b>Types</b>
-    <div id="acquisition-filter"></div><br />
-    <div>Max level: <select id="level-filter" onchange="onLevelChange(this)">
-    	<option value="30">30</option>
-    	<option value="40">40</option>
-    	<option value="50">50</option>
-    	<option value="60">60</option>
-    	<option value="70">70</option>
-    	<option value="80">80</option>
-    </select></div>
+				<!-- Map filter -->
+				<div class="map-config">
+					<div class="level-config">
+						<b>Maximum level</b><select id="level-filter" onchange="gw2traits.handleLevelChange(this)">
+					    	<option value="30">30</option>
+					    	<option value="40">40</option>
+					    	<option value="50">50</option>
+					    	<option value="60">60</option>
+					    	<option value="70">70</option>
+					    	<option value="80" selected="selected">80</option>
+					    </select>
+					</div>
+					<div id="type-config" class="type-config">
+						<b>Unlocking types</b><br />
+						<!--<div class="type-config-left">
+							<label><input type="checkbox" checked="checked"> Type 1</label><br />
+							<label><input type="checkbox" checked="checked"> Event Completion</label><br />
+							<label><input type="checkbox" checked="checked"> Map Completion</label><br />
+						</div>
+						<div class="type-config-right">
+							<label><input type="checkbox" checked="checked"> Dungeon</label><br />
+							<label><input type="checkbox" checked="checked"> Exploration</label><br />
+							<label><input type="checkbox" checked="checked"> World versus World</label><br />
+						</div>-->
+					</div>
+				</div>
+			</div>
+		</div>
 
-    <ul id="maps"></ul>
+	    <footer>
+	    	<div class="footer">
+		    	<hr />
+		        <div class="footer-text-left">&copy; 2014 <a href="mailto:raka@gw2traits.com?subject=GW2Traits" title="Feel free to contact me =)">Raka Mahesa</a> (<i>LegACy.1296</i>) All Rights Reserved</div>
+		        <div class="footer-text-right">Last updated on 25/05/2014</div>
+	    	</div>
+		</footer>
 
-    <div style="display:none" class="error">
-      Looks like there was a problem saving the test object. Make sure you've set your application ID and javascript key correctly in the call to <code>Parse.initialize</code> in this file.
-    </div>
+	    <!-- Load and run scripts -->
+	  	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	  	<script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+	  	<script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
+	  	<script type="text/javascript" src="js/gw2traits.js"></script>
 
-    <div style="display:none" class="success">
-      <p>We've also just created your first object using the following code:</p>
-      
-        <code>
-          var TestObject = Parse.Object.extend("TestObject");<br/>
-          var testObject = new TestObject();<br/>
-          testObject.save({foo: "bar"});
-        </code>
-    </div>
-  </div>
+	  	<!-- Run javascript -->
+	  	<script>	  	
+			//Initialize
+			gw2traits.initialize(function() {
+	            $('.tooltip').tooltipster({
+	            	contentAsHTML: true,
+	            	//interactive: true,
+	            	//onlyOne: true,
+	            	delay: 100,
+	            	speed: 180
+	            });
+			});
 
-  <script type="text/javascript">
-  	//Global variables
-	var MaxLevel			= 80;
-	var MapCount 			= {};
-	var MapLevels			= {};
-	var TraitMaps			= {};
-	var Acquisitions		= {};
-	var TraitUnlocks		= {};
-	var TraitAcquisitions	= {};
-
-	//Refresh map
-	function refreshMaps() {
-		//Recount
-		countMaps();
-
-		//Sort and display
-		var Maps = sortMaps();
-		displayMaps(Maps);
-	}
-
-	//Calculate map count
-  	function countMaps() {
-  		//Reset map counts
-		for (var Name in MapCount) MapCount[Name] = 0;
-
-		//For all traits
-		for (var Trait in TraitAcquisitions) {
-			//Validate map and trait
-			var Map 	= TraitMaps[Trait];
-			var Valid	= Map != null;
-			if (Valid) Valid = !TraitUnlocks[Trait];
-
-			//If still valid
-			if (Valid) {
-				//Validate minimum level
-				Valid = MapLevels[Map] == null;
-				if (!Valid) Valid = MapLevels[Map] < MaxLevel;
-			}
-
-			//If still valid
-			if (Valid) {
-				//Validate acquisition type
-				Valid = Acquisitions[TraitAcquisitions[Trait]];
-				if (Valid == null) Valid = true;
-			}
-
-			//If valid
-			if (Valid) {
-				//Add to count
-				if (MapCount[Map] == null) 	MapCount[Map] = 1;
-				else 						MapCount[Map]++;	
-			}
-		}
-  	}
-
-	//Sort maps from map count
-  	function sortMaps() {
-  		//For each map
-		var Sorted = [];
-		for (var Name in MapCount) {
-			//If not sorted yet, just insert it
-			if (Sorted.length <= 0) Sorted[0] = Name;
-			else {
-				//Find index to be inserted
-				Index = -1;
-				for (var i = 0; i < Sorted.length && Index < 0; i++) if (MapCount[Name] >= MapCount[Sorted[i]]) Index = i;
-				if (Index < 0) Index = Sorted.length;
-
-				//Insert at index
-				Sorted.splice(Index, 0, Name); 
-			}
-		}
-
-		//Return sorted map
-		return Sorted;
-  	}
-
-  	//Display maps
-  	function displayMaps(maps) {
-  		//Skip if no map
-  		if (maps == null) return;
-
-		//For each map
-		var MapList = "";
-		for (var i = 0; i < maps.length; i++) {
-			//Get data
-			var MapName = maps[i];
-			var Count 	= MapCount[MapName];
-			if (Count != null && Count > 0) {
-				//Extend string
-				MapList += "<li>" + MapName + " - " + Count + "</li>";
-			}
-		}
-
-		//Write
-		document.getElementById('maps').innerHTML = MapList;
-  	}
-
-  	//Trait checkbox click
-  	function onTraitClick(element) {
-  		//Skip if no element
-  		if (element == null) return;
-
-  		//Change data
-  		TraitUnlocks[element.value] = element.checked;
-  		saveCookies();
-
-  		//Refresh
-  		refreshMaps();
-  	}
-
-  	//Filter checkbox click
-  	function onAcquisitionClick(element) {
-  		//Skip if no element
-  		if (element == null) return;
-
-  		//Change data
-  		Acquisitions[element.value] = element.checked;
-  		saveCookies();
-
-  		//Refresh
-  		refreshMaps();
-  	}
-
-  	//Level dropdown click
-  	function onLevelChange(element) {
-  		//Skip if no element
-  		if (element == null) return;
-
-		//Get level
-		MaxLevel = parseInt(element.value);
-		saveCookies();
-
-		//Refresh
-		refreshMaps();
-  	}
-
-  	function loadCookies() {
-  		//Get cookie
-		var RawCookie = document.cookie;
-		if (RawCookie != null && RawCookie.length > 0) {
-			//Get json text
-			var RawJSON = RawCookie.substr('cookie='.length);
-			if (RawJSON != null && RawJSON.length > 0) {
-				//Create object
-				var Cookie = JSON.parse(decodeURI(RawJSON));
-
-				//Get trait
-				if (Cookie.traits != null) {
-					//Save each trait data
-					for (var i = 0; i < Cookie.traits.length; i++) TraitUnlocks[Cookie.traits[i]] = true;
-				}
-
-				//Get acquisition filter
-				if (Cookie.acquisitions != null) {
-					//For each acquisition type
-					for (var i = 0; i < Cookie.acquisitions.length; i++) Acquisitions[Cookie.acquisitions[i]] = false;
-				}
-
-				//Get max level
-				if (Cookie.max_level != null) MaxLevel = Cookie.max_level;
-				document.getElementById("level-filter").value = MaxLevel;
-			}
-		}
-  	}
-
-  	function saveCookies() {
-  		//Initialize object
-  		var Cookie = {
-  			traits: [],
-  			acquisitions: [],
-  			max_level: MaxLevel
-  		};
-
-  		//Populate
-  		for (var ID in Acquisitions) 	if (!Acquisitions[ID]) Cookie.acquisitions.push(ID);
-  		for (var Trait in TraitUnlocks)	if (TraitUnlocks[Trait]) Cookie.traits.push(Trait);
-
-  		//Write
-  		var JSONText = encodeURI(JSON.stringify(Cookie));
-  		document.cookie = "cookie=" + JSONText + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
-  	}
-
-	//Initialize
-	Parse.initialize("SDiJ7OLjISzQIt2RTOgQOTlCh8Nj0xPHwm17Isq2", "mkJfAEKHWnCkUgFT7a2Z7Btf0PGoUdBZzMbtqLTd");
-	loadCookies();
-    
-	/*var TestObject = Parse.Object.extend("TestObject");
-	var testObject = new TestObject();
-	  testObject.save({foo: "bar"}, {
-	  success: function(object) {
-		$(".success").show();
-	  },
-	  error: function(model, error) {
-		$(".error").show();
-	  }
-	});*/
-
-	//Query all traits
-	var TraitObject = Parse.Object.extend("Trait");
-	var TraitQuery	= new Parse.Query(TraitObject);	
-	TraitQuery.include("map");
-	TraitQuery.find({
-		success: function(traits) {
-			//For each result
-			var TraitList = "";
-			for (var i = 0; i < traits.length; i++) {
-				//Start trait item list
-				TraitList += '<li>Trait ' + traits[i].get("line") + '-' + traits[i].get("number");
-
-				//Set up data
-				var ID 					= traits[i].id;
-				TraitAcquisitions[ID] 	= traits[i].get("acquisition").id;
-				if (TraitUnlocks[ID] == null) TraitUnlocks[ID] = false;
-
-				//Get map
-				var Map = traits[i].get("map");
-				if (Map != null) {
-					//Save
-					var MapName 		= Map.get("name");
-					MapLevels[MapName]	= Map.get("minLevel");
-					TraitMaps[ID] 		= MapName;
-
-					//Extend string
-					TraitList += " at " + MapName;
-				}
-
-				//Close
-				TraitList += ' <input id=trait-check_"' + ID + '" value="' + ID + '" type="checkbox" onclick="onTraitClick(this)"';
-				if (TraitUnlocks[ID]) TraitList += ' checked="checked"';
-				TraitList += '></li>';
-			}
-
-			//Write stuff
-			document.getElementById('traits').innerHTML = TraitList;
-			refreshMaps();
-		}
-	});
-
-	//Query all acquisition
-	var AcquisitionObject 	= Parse.Object.extend("Acquisition");
-	var AcquisitionQuery	= new Parse.Query(AcquisitionObject);
-	AcquisitionQuery.find({
-		success: function(acquisitions) {
-			//For each type
-			var FilterText = "";
-			for (var i = 0; i < acquisitions.length; i++) {
-				//Get ID
-				var ID 	= acquisitions[i].id;
-				if (Acquisitions[ID] == null) Acquisitions[ID]	= true; 
-
-				//Set text
-				FilterText += '<label><input type="checkbox" onclick="onAcquisitionClick(this)"';
-				if (Acquisitions[ID]) FilterText += ' checked="checked"';
-				FilterText += ' id=acquisition-check_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
-			}
-
-			//Write
-			document.getElementById('acquisition-filter').innerHTML = FilterText;
-		}
-	});
-  </script>
-</body>
+			//Load contents
+			gw2traits.loadTraits();
+			gw2traits.loadAcquisitionTypes();
+      	</script>
+  	</body>
 </html>

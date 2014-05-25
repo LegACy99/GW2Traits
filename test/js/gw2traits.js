@@ -206,7 +206,7 @@ gw2traits = function() {
 		if (id != null) {
 			//If trait exist
 			var Trait = m_Traits[id];
-			if (Trait != null) Style = "background-image: url(images/trait-" + Trait[TRAIT_NUMBER] + "-" + (Trait[TRAIT_UNLOCK] ? "unlocked" : "locked") + ".png);";
+			if (Trait != null) Style = "background-image: url(images/trait-" + Trait[TRAIT_NUMBER] + ".png); background-position: " + (Trait[TRAIT_UNLOCK] ? "100" : "0") + "% 0;";
 		}
 
 		//Return

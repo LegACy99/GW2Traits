@@ -150,7 +150,6 @@ gw2traits = function() {
 	var loadCookies = function() {
 		//Get cookie
 		var RawCookie = document.cookie;
-		console.log("load cookies");
 		if (RawCookie != null && RawCookie.length > 0) {
 			//Get all cookies
 			var Cookies = RawCookie.split('; ');
@@ -159,11 +158,9 @@ gw2traits = function() {
 				for (var i = 0; i < Cookies.length; i++) {
 					//Split
 					var CookiePair = Cookies[i].split('=');
-					console.log("Key " + CookiePair[0]);
 					if (CookiePair != null && CookiePair.length >= 2 && CookiePair[0] != null && CookiePair[0] == COOKIE_START) {
 						//Get cookie value
 						var RawJSON = CookiePair[1];
-						console.log("Value " + RawJSON);
 						if (RawJSON != null && RawJSON.length > 0) {
 							//Create object
 							var Cookie = JSON.parse(decodeURI(RawJSON));

@@ -15,7 +15,7 @@ gw2traits = function() {
 	var TRAIT_NUMBER		= "number";
 	var TRAIT_UNLOCK		= "unlocked";
 	var TRAIT_ACQUISITION	= "acquisition";
-	var COOKIE_START		= "cookie=";
+	var COOKIE_START		= "cookie";
 	var ELEMENT_TRAIT_ID	= "trait_";
 
 	//Initialize stuff
@@ -151,32 +151,43 @@ gw2traits = function() {
 		//Get cookie
 		var RawCookie = document.cookie;
 		if (RawCookie != null && RawCookie.length > 0) {
-			//Get json text
-			var RawJSON = RawCookie.substr(COOKIE_START.length);
-			if (RawJSON != null && RawJSON.length > 0) {
-				//Create object
-				var Cookie = JSON.parse(decodeURI(RawJSON));
+			//Get all cookies
+			var Cookies = RawCookie.split('; ');
+			if (Cookies != null) {
+				//For each cookie
+				for (var i = 0; i < Cookies.length; i++) {
+					//Split
+					var CookiePair = Cookies[i].split('=');
+					if (CookiePair != null && CookiePair.length >= 2 && CookiePair[0] != null && CookiePair[0] == COOKIE_START) {
+						//Get cookie value
+						var RawJSON = CookiePair[1];
+						if (RawJSON != null && RawJSON.length > 0) {
+							//Create object
+							var Cookie = JSON.parse(decodeURI(RawJSON));
 
-				//Get trait
-				var i = 0;
-				if (Cookie.traits != null) {
-					//For each trait
-					for (i = 0; i < Cookie.traits.length; i++) {
-						//Set
-						if (m_Traits[Cookie.traits[i]] == null) m_Traits[Cookie.traits[i]] = {};
-						m_Traits[Cookie.traits[i]][TRAIT_UNLOCK] = true;
+							//Get trait
+							var i = 0;
+							if (Cookie.traits != null) {
+								//For each trait
+								for (i = 0; i < Cookie.traits.length; i++) {
+									//Set
+									if (m_Traits[Cookie.traits[i]] == null) m_Traits[Cookie.traits[i]] = {};
+									m_Traits[Cookie.traits[i]][TRAIT_UNLOCK] = true;
+								}
+							}
+
+							//Get acquisition filter
+							if (Cookie.acquisitions != null) {
+								//For each acquisition type
+								for (i = 0; i < Cookie.acquisitions.length; i++) m_Acquisitions[Cookie.acquisitions[i]] = false;
+							}
+
+							//Get max level
+							if (Cookie.max_level != null) m_MaxLevel = Cookie.max_level;
+							document.getElementById("level-filter").value = m_MaxLevel;
+						}
 					}
 				}
-
-				//Get acquisition filter
-				if (Cookie.acquisitions != null) {
-					//For each acquisition type
-					for (i = 0; i < Cookie.acquisitions.length; i++) m_Acquisitions[Cookie.acquisitions[i]] = false;
-				}
-
-				//Get max level
-				if (Cookie.max_level != null) m_MaxLevel = Cookie.max_level;
-				document.getElementById("level-filter").value = m_MaxLevel;
 			}
 		}
 	};
@@ -195,7 +206,7 @@ gw2traits = function() {
 
 		//Write
 		var JSONText = encodeURI(JSON.stringify(Cookie));
-		document.cookie = COOKIE_START + JSONText + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+		document.cookie = COOKIE_START + '=' + JSONText + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
 	};
 
 	var getTraitStyle = function(id) {

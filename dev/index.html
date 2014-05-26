@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>GW2Traits - Guild Wars 2 Trait Tracker</title>
+		<meta name="author" content="Raka Mahesa">
+		<meta name="viewport" content="width=device-width">
+		<meta name="description" content="An online trait tracker for Guild Wars 2">
+		<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+		<meta name="msapplication-TileColor" content="#b91d47">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="images/favicon/apple-touch-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="images/favicon/apple-touch-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="images/favicon/apple-touch-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="images/favicon/apple-touch-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="images/favicon/apple-touch-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="images/favicon/apple-touch-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="images/favicon/apple-touch-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="images/favicon/apple-touch-icon-152x152.png">
+		<link rel="icon" type="image/png" href="images/favicon/favicon-196x196.png" sizes="196x196">
+		<link rel="icon" type="image/png" href="images/favicon/favicon-160x160.png" sizes="160x160">
+		<link rel="icon" type="image/png" href="images/favicon/favicon-96x96.png" sizes="96x96">
+		<link rel="icon" type="image/png" href="images/favicon/favicon-16x16.png" sizes="16x16">
+		<link rel="icon" type="image/png" href="images/favicon/favicon-32x32.png" sizes="32x32">
+
+		<link rel="stylesheet" type="text/css" media="all" href="css/reset.css">
+		<link rel="stylesheet" type="text/css" media="all" href="css/styles.css">
+		<link rel="stylesheet" type="text/css" media="all" href="css/tooltipster.css">
+	</head>
+	<body>
+		<!-- Header -->
+		<div class="header">
+			<img src="images/logo.png" alt="Guild Wars 2" class="header-image"></img><span class="header-text">Guild Wars 2 Trait Tracker</span>
+		</div>
+
+		<!-- Content -->
+		<div class="content">
+			<!-- Traits -->
+	  		<div class="panel" id="trait-panel">
+				<!-- Trait header -->
+ 				<div class="panel-header">
+	  				<div class="panel-title" id="trait-title">Traits</div>
+	  				<div class="trait-buttons">
+		  				<input class="trait-button" type="button" value="Lock all traits" onclick="gw2traits.setAllTraitsUnlock(false)" />
+		  				<input class="trait-button" type="button" value="Unlock all traits" onclick="gw2traits.setAllTraitsUnlock(true)" />
+	  				</div>
+	  			</div>
+
+	  			<!-- Traits menu -->
+			</div>
+
+			<div class="panel" id="map-panel">
+  				<!-- Map header -->
+	  			<div class="panel-header" id="map-header">
+	  				<div class="panel-title" id="map-title">Maps</div>
+	  			</div>
+
+	  			<!-- Map list -->
+				<div class="map-list"><ul id="map-ul" class="map-ul"></ul></div>
+
+				<!-- Map filter -->
+				<div class="map-config">
+					<div class="level-config">
+						<b>Maximum level</b><select id="level-filter" onchange="gw2traits.handleLevelChange(this)">
+					    	<option value="30">30</option>
+					    	<option value="40">40</option>
+					    	<option value="50">50</option>
+					    	<option value="60">60</option>
+					    	<option value="70">70</option>
+					    	<option value="80" selected="selected">80</option>
+					    </select>
+					</div>
+					<div id="type-config" class="type-config">
+						<b>Unlocking types</b><br />
+						<!--<div class="type-config-left">
+							<label><input type="checkbox" checked="checked"> Type 1</label><br />
+							<label><input type="checkbox" checked="checked"> Event Completion</label><br />
+							<label><input type="checkbox" checked="checked"> Map Completion</label><br />
+						</div>
+						<div class="type-config-right">
+							<label><input type="checkbox" checked="checked"> Dungeon</label><br />
+							<label><input type="checkbox" checked="checked"> Exploration</label><br />
+							<label><input type="checkbox" checked="checked"> World versus World</label><br />
+						</div>-->
+					</div>
+				</div>
+			</div>
+		</div>
+
+	    <footer>
+	    	<div class="footer">
+		    	<hr />
+		        <div class="footer-text-left">&copy; 2014 <a href="mailto:raka@gw2traits.com?subject=GW2Traits" title="Feel free to contact me =)">Raka Mahesa</a> (<i>LegACy.1296</i>) All Rights Reserved</div>
+		        <div class="footer-text-right">Last updated on 25/05/2014</div>
+	    	</div>
+		</footer>
+
+	    <!-- Load and run scripts -->
+	  	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	  	<script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+	  	<script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
+	  	<script type="text/javascript" src="js/gw2traits.js"></script>
+
+	  	<!-- Run javascript -->
+	  	<script>	  	
+			//Initialize
+			gw2traits.initialize(function() {
+	            $('.tooltip').tooltipster({
+	            	contentAsHTML: true,
+	            	//interactive: true,
+	            	//onlyOne: true,
+	            	delay: 100,
+	            	speed: 180
+	            });
+			});
+
+			//Load contents
+			gw2traits.loadTraits();
+			gw2traits.loadAcquisitionTypes();
+      	</script>
+  	</body>
+</html>

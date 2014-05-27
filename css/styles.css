@@ -8,13 +8,13 @@ body {
     margin-right: auto;
     margin-bottom: 56px;
     background-color: #F0F0F0;
-    max-width: 1088px;
-    min-width: 1088px;
+    max-width: 1116px;
+    min-width: 1116px;
     color: #222222;
 }
 
 footer {
-    max-width: 1088px;
+    max-width: 1116px;
     position: absolute;
     height: 56px;
     width: 100%;
@@ -148,7 +148,7 @@ footer {
 }
 
 .map-list {
-    width: 360px;
+    width: 388px;
     height: 248px;
     overflow: auto;
     border-bottom-style: solid;

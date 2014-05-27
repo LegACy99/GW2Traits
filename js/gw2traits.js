@@ -324,9 +324,21 @@ gw2traits = function() {
 			//If not sorted yet, just insert it
 			if (Sorted.length <= 0) Sorted[0] = Name;
 			else {
-				//Find index to be inserted
-				Index = -1;
-				for (var i = 0; i < Sorted.length && Index < 0; i++) if (m_MapCount[Name] >= m_MapCount[Sorted[i]]) Index = i;
+				//For each sorted one
+				var Index = -1;
+				var Count = m_MapCount[Name];
+				var Level = m_MapLevels[Name];
+				for (var i = 0; i < Sorted.length && Index < 0; i++) {
+					//If count is bigger, set
+					if (Count > m_MapCount[Sorted[i]]) Index = i;
+					else if (Count == m_MapCount[Sorted[i]]) {
+						//Check level
+						if (m_MapLevels[Sorted[i]] == null) 						Index = i;
+						else if (Level != null && Level <= m_MapLevels[Sorted[i]]) 	Index = i;
+					}
+				}
+
+				//If not found, put it at the last one
 				if (Index < 0) Index = Sorted.length;
 
 				//Insert at index

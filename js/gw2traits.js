@@ -418,12 +418,23 @@ gw2traits = function() {
 		refreshMaps();
 	};
 
+	//Notification close
+	var handleNotificationClose = function() {
+		//Get notification
+		var Notification = document.getElementById('notification');
+		if (Notification != null) {
+			//Close
+			Notification.setAttribute("style", "display: none;");
+		}
+	}
+
 	//Return public members
 	return {
 		initialize: initialize,
 		loadTraits: loadTraits,
 		loadAcquisitionTypes: loadAcquisitionTypes,
 		handleAcquisitionClick: handleAcquisitionClick,
+		handleNotificationClose: handleNotificationClose,
 		setAllTraitsUnlock: setAllTraitsUnlock,
 		handleLevelChange: handleLevelChange,
 		handleTraitClick: handleTraitClick

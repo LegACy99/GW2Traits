@@ -52,6 +52,30 @@ footer {
     margin-top: -7px;
 }
 
+.notification {
+    padding: 5px 0;
+    margin-left: 6px;
+    margin-top: -18px;
+    margin-right: 10px;
+    margin-bottom: 16px;
+    border-color: #222222;
+    background-color: #DDDDDD;
+    border-style: solid;
+    text-align: center;
+    position: relative;
+    border-radius: 4px;
+    border-width: 1px;
+}
+
+.notification-button {
+    border: none;
+    background: none;
+    font-weight: bold;
+    margin-right: 4px;
+    position: absolute;
+    right: 0;
+}
+
 .panel {
     display: inline-block;
 }
@@ -72,7 +96,6 @@ footer {
 
 .panel-title {
     margin-left: 2px;
-    background-colora: pink;
     display: inline-block;
     font-weight: bold;
     font-size: 150%;
@@ -83,7 +106,6 @@ footer {
     margin-top: -6px;
     position: absolute;
     display: inline-block;
-    background-colora: yellow;
 }
 
 .trait-button {

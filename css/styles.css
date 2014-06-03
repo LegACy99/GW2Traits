@@ -65,6 +65,7 @@ footer {
     border-style: solid;
     border-radius: 4px;
     border-width: 1px;
+    display: none;
 }
 
 .notification-button {

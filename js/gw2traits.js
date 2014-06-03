@@ -7,8 +7,9 @@ gw2traits = function() {
 	var m_MapCount			= {};
 	var m_MapLevels			= {};
 	var m_Acquisitions		= {};
-	var m_MaxLevel			= 80;
+	var m_LastNotification	= new Date(0);
 	var m_TooltipHandler	= function(){};
+	var m_MaxLevel			= 80;
 
 	//Constants
 	var TRAIT_MAP			= "map";
@@ -147,6 +148,35 @@ gw2traits = function() {
 		});
 	};
 
+	var loadNotification = function() {
+		//Prepare query
+		var NewsObject	= Parse.Object.extend("News");
+		var NewsQuery	= new Parse.Query(NewsObject);
+		NewsQuery.lessThanOrEqualTo("publish", new Date());		//Not future notification
+		NewsQuery.greaterThan("publish", m_LastNotification);	//Ahead of the last closed notification
+		NewsQuery.descending("publish");						//Latest one first
+		NewsQuery.exists("publish");							//Not null
+
+		//Get news item
+		NewsQuery.first({
+			success: function(news) {
+				//If there's a news
+				if (news != null && news.get('title') != null) {
+					//Get element
+					var Message = document.getElementById('notification-message');
+					if (Message != null) {
+						//Set message
+						Message.innerHTML = news.get('title');
+
+						//Show notification
+						var Notification = document.getElementById('notification');
+						if (Notification != null) Notification.setAttribute("style", "display: block;");
+					}
+				}
+			}
+		});
+	}
+
 	var loadCookies = function() {
 		//Get cookie
 		var RawCookie = document.cookie;
@@ -185,6 +215,9 @@ gw2traits = function() {
 							//Get max level
 							if (Cookie.max_level != null) m_MaxLevel = Cookie.max_level;
 							document.getElementById("level-filter").value = m_MaxLevel;
+
+							//Get last notification
+							if (Cookie.last_notif != null) m_LastNotification = new Date(Cookie.last_notif);
 						}
 					}
 				}
@@ -197,7 +230,8 @@ gw2traits = function() {
 		var Cookie = {
 			traits: [],
 			acquisitions: [],
-			max_level: m_MaxLevel
+			max_level: m_MaxLevel,
+			last_notif: m_LastNotification
 		};
 
 		//Populate
@@ -425,6 +459,10 @@ gw2traits = function() {
 		if (Notification != null) {
 			//Close
 			Notification.setAttribute("style", "display: none;");
+
+			//Set last notification
+			m_LastNotification = new Date();
+			saveCookies();
 		}
 	}
 
@@ -432,6 +470,7 @@ gw2traits = function() {
 	return {
 		initialize: initialize,
 		loadTraits: loadTraits,
+		loadNotification: loadNotification,
 		loadAcquisitionTypes: loadAcquisitionTypes,
 		handleAcquisitionClick: handleAcquisitionClick,
 		handleNotificationClose: handleNotificationClose,

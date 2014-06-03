@@ -277,13 +277,37 @@ footer {
 
 .type-config-left {
     display: inline-block;
-    background-colora: orange;
 }
 
 .type-config-right {
     margin-right: 20px;
     display: inline-block;
-    background-coloar: yellow;
     position: absolute;
+    right: 0;
+}
+
+.export {
+    margin-top: 20px;
+    padding-left: 10px;
+    padding-right: 156px; 
+    position: relative;
+}
+
+.export-result {
+    padding: 5px 6px;
+    margin-right: 32px;
+    background-color: #FFFFFF;
+    border-color: #222222;
+    border-style: solid;
+    border-width: 1px;
+    overflow: auto;
+}
+
+.export-button {
+    height: 34px;
+    vertical-align: top;
+    position: absolute;
+    margin-right: 16px;
+    width: 140px;
     right: 0;
 }

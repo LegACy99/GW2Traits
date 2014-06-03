@@ -464,7 +464,17 @@ gw2traits = function() {
 			m_LastNotification = new Date();
 			saveCookies();
 		}
-	}
+	};
+
+	//Exporting
+	var handleExportClick = function() {
+		//Get result element
+		var Result = document.getElementById('export-result');
+		if (Result != null) {
+			//
+			console.log("test");
+		}
+	};
 
 	//Return public members
 	return {
@@ -475,6 +485,7 @@ gw2traits = function() {
 		handleAcquisitionClick: handleAcquisitionClick,
 		handleNotificationClose: handleNotificationClose,
 		setAllTraitsUnlock: setAllTraitsUnlock,
+		handleExportClick: handleExportClick,
 		handleLevelChange: handleLevelChange,
 		handleTraitClick: handleTraitClick
 	};

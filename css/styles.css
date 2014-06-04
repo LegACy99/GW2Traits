@@ -287,27 +287,39 @@ footer {
 }
 
 .export {
-    margin-top: 20px;
+    margin-top: 12px;
+    margin-bottom: 60px;
     padding-left: 10px;
-    padding-right: 156px; 
-    position: relative;
-}
-
-.export-result {
-    padding: 5px 6px;
-    margin-right: 32px;
-    background-color: #FFFFFF;
-    border-color: #222222;
-    border-style: solid;
-    border-width: 1px;
-    overflow: auto;
 }
 
 .export-button {
-    height: 34px;
+    width: 284px;
+    height: 40px;
+    margin-right: 20px;
+    display: inline-block;
+}
+
+.export-hint {
+    width: 760px;
+    height: 40px;
+    color: #666666;
+    padding: 0 10px;
+    display: inline-block;
     vertical-align: top;
-    position: absolute;
-    margin-right: 16px;
-    width: 140px;
-    right: 0;
+    background: none;
+    border: none;
+}
+
+.export-result {
+    width: 760px;
+    height: 36px;
+    color: #222222;
+    padding: 0 16px;
+    background: none;
+    border-width: 1px;
+    border-style: none;
+    border-color: #222222;
+    border-bottom-style: solid;
+    display: inline-block;
+    vertical-align: top;
 }

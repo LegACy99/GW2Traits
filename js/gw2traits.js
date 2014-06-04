@@ -471,8 +471,13 @@ gw2traits = function() {
 		//Get result element
 		var Result = document.getElementById('export-result');
 		if (Result != null) {
-			//
-			console.log("test");
+			//Set text
+			Result.setAttribute("value", "http://www.gw2traits.com/?traits=KU87ASF87");
+
+			//Configure element
+			Result.setAttribute("class", "export-result");
+			Result.removeAttribute("disabled");
+			Result.select();
 		}
 	};
 

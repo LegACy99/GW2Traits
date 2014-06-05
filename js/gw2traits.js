@@ -16,6 +16,7 @@ gw2traits = function() {
 	var TRAIT_NUMBER		= "number";
 	var TRAIT_UNLOCK		= "unlocked";
 	var TRAIT_ACQUISITION	= "acquisition";
+	var ENCODING_ALPHABET	= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
 	var COOKIE_START		= "cookie";
 	var ELEMENT_TRAIT_ID	= "trait_";
 
@@ -409,6 +410,47 @@ gw2traits = function() {
 		document.getElementById('map-ul').innerHTML = MapList;
 	};
 
+	var encodeTraits = function() {
+		//Initialize
+		var Count			= 0;
+		var Empty			= 0;
+		var TraitsValue 	= 0;
+		var TraitsFactor 	= 1;
+		var Result  		= "";
+
+		//For each trait
+		for (var Trait in m_Traits) {
+			//Save
+			if (m_Traits[Trait][TRAIT_UNLOCK]) TraitsValue += TraitsFactor;
+			TraitsFactor *= 2;
+
+			//Check if 6 times
+			Count++;
+			if (Count >= 6 || (Count == 5 && Result.length + Empty == 10)) {
+				//If nothing, don't do anything
+				if (Result.length == 0) console.log("Value " + TraitsValue);
+				if (TraitsValue == 0) Empty++;
+				else {
+					//Append the corresponding character
+					for (var i = 0; i < Empty; i++) Result = ENCODING_ALPHABET.charAt(0) + Result;
+					Result = ENCODING_ALPHABET.charAt(TraitsValue) + Result;
+					Empty = 0;
+				}
+
+				//Reset
+				Count			= 0;
+				TraitsValue 	= 0;
+				TraitsFactor	= 1;
+			}
+		}
+
+		//Return
+		return Result;
+	};
+
+	var decodeTraits = function(traits) {
+	};
+
 	//Trait checkbox click
 	var handleTraitClick = function(element) {
 		//Skip if no element
@@ -468,13 +510,14 @@ gw2traits = function() {
 
 	//Exporting
 	var handleExportClick = function() {
+		//Encode traits
+		var Encoded = encodeTraits();
+
 		//Get result element
 		var Result = document.getElementById('export-result');
-		if (Result != null) {
-			//Set text
-			Result.setAttribute("value", "http://www.gw2traits.com/?traits=KU87ASF87");
-
+		if (Result != null && Encoded != null) {
 			//Configure element
+			Result.setAttribute("value", "http://www.gw2traits.com/?traits=" + Encoded);
 			Result.setAttribute("class", "export-result");
 			Result.removeAttribute("disabled");
 			Result.select();

@@ -17,8 +17,10 @@ gw2traits = function() {
 	var TRAIT_UNLOCK		= "unlocked";
 	var TRAIT_ACQUISITION	= "acquisition";
 	var ENCODING_ALPHABET	= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
-	var COOKIE_START		= "cookie";
+	var PARAMETER_TRAITS	= "traits";
 	var ELEMENT_TRAIT_ID	= "trait_";
+	var COOKIE_START		= "cookie";
+	var ENCODE_CHUNK		= 6;
 
 	//Initialize stuff
 	var initialize = function(tooltip) {
@@ -28,6 +30,18 @@ gw2traits = function() {
 		//Initialize
 		Parse.initialize("SDiJ7OLjISzQIt2RTOgQOTlCh8Nj0xPHwm17Isq2", "mkJfAEKHWnCkUgFT7a2Z7Btf0PGoUdBZzMbtqLTd");
 		loadCookies();
+
+		//Check URL
+		var Query = window.location.search.substring(1);
+		if (Query != null && Query.length > 0) {
+			//Get all parameter
+			var Parameters = Query.split("&");
+			for (var i = 0; i < Parameters.length; i++) {
+				//Check parameter name
+				var Parameter = Parameters[i].split("=");
+				if (Parameter.length >= 2 && Parameter[0] == PARAMETER_TRAITS) decodeTraits(Parameter[1]); 
+			}
+		}
 	};
 
 	//Load traits from database
@@ -424,11 +438,10 @@ gw2traits = function() {
 			if (m_Traits[Trait][TRAIT_UNLOCK]) TraitsValue += TraitsFactor;
 			TraitsFactor *= 2;
 
-			//Check if 6 times
+			//Check if chunk size reached
 			Count++;
-			if (Count >= 6 || (Count == 5 && Result.length + Empty == 10)) {
+			if (Count >= ENCODE_CHUNK || (Count == ENCODE_CHUNK - 1 && Result.length + Empty == 10)) {
 				//If nothing, don't do anything
-				if (Result.length == 0) console.log("Value " + TraitsValue);
 				if (TraitsValue == 0) Empty++;
 				else {
 					//Append the corresponding character
@@ -449,6 +462,51 @@ gw2traits = function() {
 	};
 
 	var decodeTraits = function(traits) {
+		//Validate
+		if (traits == null) 	return;
+		if (traits.length <= 0)	return;
+
+		//Initialize
+		var Traits 	= [];
+		var Max 	= traits.length - 1;
+		if (Max > 10) Max = 10;
+		for (var i = 0; i < Object.keys(m_Traits).length; i++) Traits.push(false);
+
+		//For each character
+		for (var i = Max; i >= 0; i--) {
+			//Get value
+			var Char 	= traits.charAt(i);
+			var Value 	= ENCODING_ALPHABET.indexOf("" + Char);
+			if (Value >= ENCODING_ALPHABET.length) 	Value = ENCODING_ALPHABET - 1
+			if (Value < 0) 							Value = 0;
+
+			//While
+			var Offset = ENCODE_CHUNK - 1;
+			var Factor = Math.pow(2, Offset);
+			while (Offset >= 0) {
+				//If true for that factor
+				if (Value >= Factor) {
+					//Remove from value
+					Value -= Factor;
+
+					//Check index
+					var Index = ((Max - i) *  ENCODE_CHUNK) + Offset;
+					if (Index < Traits.length) Traits[Index] = true;
+				}
+
+				//Reduce
+				Factor /= 2;
+				Offset--;
+			}
+		}
+
+		//Save
+		var Index = 0;
+		for (var Trait in m_Traits) {
+			//Save
+			m_Traits[Trait][TRAIT_UNLOCK] = Traits[Index];
+			Index++;
+		}
 	};
 
 	//Trait checkbox click

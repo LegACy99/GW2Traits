@@ -124,7 +124,7 @@ footer {
     right: 4px;
     margin-top: -6px;
     position: absolute;
-    display: inline-block;
+    display: none;
 }
 
 .trait-button {
@@ -290,6 +290,7 @@ footer {
     margin-top: 12px;
     margin-bottom: 60px;
     padding-left: 10px;
+    display: none;
 }
 
 .export-button {

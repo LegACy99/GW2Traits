@@ -140,6 +140,8 @@ gw2traits = function() {
 
 				//Write stuff
 				document.getElementById('trait-panel').insertAdjacentHTML("beforeend", TraitList);
+				document.getElementById('trait-buttons').setAttribute("style", "display: inline-block;");
+				document.getElementById('export').setAttribute("style", "display: block;");
 				if (m_TooltipHandler != null) m_TooltipHandler();
 				refreshMaps();
 			}
@@ -453,7 +455,6 @@ gw2traits = function() {
 
 			//Check if chunk size reached
 			Count++;
-			console.log("Count " + Count + " ID " + ID + " unlock ? " + m_TraitUnlocks[ID]);
 			if (Count >= ENCODE_CHUNK || (Count == ENCODE_CHUNK - 1 && Result.length + Empty == 10)) {
 				//If nothing, don't do anything
 				if (TraitsValue == 0) Empty++;
@@ -490,7 +491,6 @@ gw2traits = function() {
 		for (var i = traits.length - 1; i >= Min; i--) {
 			//Get value
 			var Char 	= traits.charAt(i);
-			console.log("Index " + i + " character " + Char);
 			var Value 	= ENCODING_ALPHABET.indexOf("" + Char);
 			if (Value >= ENCODING_ALPHABET.length) 	Value = ENCODING_ALPHABET - 1
 			if (Value < 0) 							Value = 0;

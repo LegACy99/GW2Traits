@@ -43,7 +43,7 @@
 				<!-- Trait header -->
  				<div class="panel-header">
 	  				<div class="panel-title" id="trait-title">Traits</div>
-	  				<div class="trait-buttons">
+	  				<div class="trait-buttons" id="trait-buttons">
 		  				<input class="trait-button" type="button" value="Lock all traits" onclick="gw2traits.setAllTraitsUnlock(false)" />
 		  				<input class="trait-button" type="button" value="Unlock all traits" onclick="gw2traits.setAllTraitsUnlock(true)" />
 	  				</div>
@@ -79,7 +79,7 @@
 				</div>
 			</div>
 
-			<div class="export">
+			<div class="export" id="export">
 				<button class="export-button" onclick="gw2traits.handleExportClick()">Export traits</button>
 				<input id="export-result" class="export-hint" type="text" disabled value="Exporting traits will generate a special link that you can use to share your current trait setup." />
 			</div>

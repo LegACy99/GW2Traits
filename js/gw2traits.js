@@ -4,9 +4,9 @@
 
 var GW2Traits = function() {
 	//App data
-	var m_MapLinks	= {};
-	var m_MapCount	= {};
-	var m_MapLevels	= {};
+	var m_Maps				= {};
+	var m_TraitsParameter	= null;
+	var m_TooltipHandler	= function(){};
 
 	//Cookie data
 	var m_MaxLevel			= 80;
@@ -15,8 +15,6 @@ var GW2Traits = function() {
 	var m_TraitUnlocks		= {};
 
 	//Other data
-	var m_TraitsParameter	= null;
-	var m_TooltipHandler	= function(){};
 
 	//Constants
 	var ELEMENT_TRAIT_ID	= "trait_";
@@ -59,8 +57,8 @@ var GW2Traits = function() {
 				TraitManager.setTraits(traits);
 				if (m_TraitsParameter != null) {
 					//Decode
-					m_TraitUnlocks 		= TraitManager.decodeTraits(m_TraitsParameter);
-					m_TraitsParameter 	= null;
+					m_TraitUnlocks		= TraitManager.decodeTraits(m_TraitsParameter);
+					m_TraitsParameter	= null;
 				}
 
 				//Browse array
@@ -83,12 +81,10 @@ var GW2Traits = function() {
 
 					//Get map
 					var Map = traits[i].get("map");
-					if (Map != null) {
-						//Save
-						var MapName				= Map.get("name");
-						m_MapLinks[MapName]		= Map.get("wiki");
-						m_MapLevels[MapName]	= Map.get("minLevel");
-					}
+					if (Map != null) m_Maps[Map.get("name")] = {
+						level: Map.get("minLevel"),
+						link: Map.get("wiki")
+					};
 
 					//If first column
 					if (Column === 0) {
@@ -270,7 +266,7 @@ var GW2Traits = function() {
 		if (WasUnlocked != Unlocked) {
 			//Set data
 			Changed = true;
-			if (Unlocked) 	m_TraitUnlocks[id] = true;
+			if (Unlocked)	m_TraitUnlocks[id] = true;
 			else			delete m_TraitUnlocks[id];
 
 			//Get element
@@ -290,7 +286,7 @@ var GW2Traits = function() {
 	var setAllTraitsUnlock = function(unlocked) {
 		//Change all traits
 		var Changed = false;
-		var Traits 	= TraitManager.getTraitIDs();
+		var Traits	= TraitManager.getTraitIDs();
 		for (var i = 0; i < Traits.length; i++) if (setTraitUnlock(Traits[i], unlocked)) Changed = true;
 
 		//If there's a change
@@ -304,24 +300,22 @@ var GW2Traits = function() {
 	//Refresh map
 	var refreshMaps = function() {
 		//Recount
-		countMaps();
+		var Counts = countMaps();
 
 		//Sort and display
-		var Maps = sortMaps();
-		displayMaps(Maps);
+		var Maps = sortMaps(Counts);
+		displayMaps(Maps, Counts);
 	};
 
 	//Calculate map count
 	var countMaps = function() {
-		//Reset map counts
-		for (var Name in m_MapCount) if (m_MapCount.hasOwnProperty(Name)) m_MapCount[Name] = 0;
-
-		//For all traits
+		//Initialize
+		var Result = {};
 		var Traits = TraitManager.getTraitIDs();
 		for (var i = 0; i < Traits.length; i++) {							
 			//Validate map
-			var Map		= TraitManager.getTraitMap(Traits[i]);
-			var Valid	= Map != null;
+			var Name	= TraitManager.getTraitMap(Traits[i]);
+			var Valid	= Name != null;
 
 			//If not unlocked and unfiltered
 			if (Valid) Valid = !m_TraitUnlocks[Traits[i]];			
@@ -330,38 +324,41 @@ var GW2Traits = function() {
 			//If still valid
 			if (Valid) {
 				//Validate minimum level
-				Valid = m_MapLevels[Map] == null;
-				if (!Valid) Valid = m_MapLevels[Map] <= m_MaxLevel;
+				Valid = m_Maps[Name].level == null;
+				if (!Valid) Valid = m_Maps[Name].level <= m_MaxLevel;
 			}
 
 			//If valid
 			if (Valid) {
 				//Add to count
-				if (m_MapCount[Map] == null)	m_MapCount[Map] = 1;
-				else							m_MapCount[Map]++;
+				if (Result[Name] == null)	Result[Name] = 1;
+				else						Result[Name]++;
 			}
 		}
+
+		//Return
+		return Result;
 	};
 
 	//Sort maps from map count
-	var sortMaps = function() {
+	var sortMaps = function(counts) {
 		//For each map
 		var Sorted = [];
-		for (var Name in m_MapCount) {
+		for (var Name in counts) {
 			//If not sorted yet, just insert it
 			if (Sorted.length <= 0) Sorted[0] = Name;
 			else {
 				//For each sorted one
 				var Index = -1;
-				var Count = m_MapCount[Name];
-				var Level = m_MapLevels[Name];
+				var Count = counts[Name];
+				var Level = m_Maps[Name].level;
 				for (var i = 0; i < Sorted.length && Index < 0; i++) {
 					//If count is bigger, set
-					if (Count > m_MapCount[Sorted[i]]) Index = i;
-					else if (Count == m_MapCount[Sorted[i]]) {
+					if (Count > counts[Sorted[i]]) Index = i;
+					else if (Count == counts[Sorted[i]]) {
 						//Check level
-						if (m_MapLevels[Sorted[i]] == null)							Index = i;
-						else if (Level != null && Level <= m_MapLevels[Sorted[i]])	Index = i;
+						if (m_Maps[Sorted[i]].level == null)						Index = i;
+						else if (Level != null && Level <= m_Maps[Sorted[i]].level)	Index = i;
 					}
 				}
 
@@ -378,9 +375,13 @@ var GW2Traits = function() {
 	};
 
 	//Display maps
-	var displayMaps = function(maps) {
+	var displayMaps = function(maps, counts) {
 		//Skip if no map
 		if (maps == null) return;
+
+		//Check count
+		var Counts = counts;
+		if (Counts == null) Counts = {};
 
 		//For each map
 		var MapList = "";
@@ -388,12 +389,12 @@ var GW2Traits = function() {
 			//Get data
 			var Wiki	= "";
 			var MapName = maps[i];
-			var Count	= m_MapCount[MapName];
+			var Count	= Counts[MapName];
 
 			//If have a count
 			if (Count != null && Count > 0) {
 				//Extend string
-				if (m_MapLinks[MapName] != null) Wiki = ' href="' + m_MapLinks[MapName] + '" title="' + MapName + ' - Guild Wars 2 Wiki" target="_blank"';
+				if (m_Maps[MapName].link != null) Wiki = ' href="' + m_Maps[MapName].link + '" title="' + MapName + ' - Guild Wars 2 Wiki" target="_blank"';
 				MapList += '<li><a class="map-item' + (i < 3 ? (" item" + (i + 1)) : '') + '"' + Wiki + '>' + MapName + " (" + Count + " trait" + (Count > 1 ? 's' : '') + ")</a></li>";
 			}
 		}
@@ -425,7 +426,7 @@ var GW2Traits = function() {
 		if (element == null) return;
 
 		//Checked or no?
-		if (!element.checked) 	m_AcquisitionFilter[element.value] = true;
+		if (!element.checked)	m_AcquisitionFilter[element.value] = true;
 		else					delete m_AcquisitionFilter[element.value];
 
 		//Refresh

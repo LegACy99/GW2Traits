@@ -1,13 +1,11 @@
-/*jshint eqnull:true */
+/* jshint eqnull:true			*/
+/* exported TraitManager		*/
 
 var TraitManager = function() {
 	//Members
 	var m_Traits = {};
 
 	//Constants
-	var MAP					= "map";
-	var NUMBER				= "number";
-	var ACQUISITION			= "acquisition";
 	var ENCODING_ALPHABET	= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 	var ENCODING_CHUNK_SIZE	= 6;
 
@@ -18,7 +16,7 @@ var TraitManager = function() {
 		
 		//Return
 		return Result;
-	}
+	};
 
 	var getTraitNumber = function(id) {
 		//Get
@@ -57,29 +55,29 @@ var TraitManager = function() {
 
 		//For each trait
 		for (var ID in m_Traits) {
-			//Skip if not key
-			if (!m_Traits.hasOwnProperty(ID)) continue;
+			//If a valid key
+			if (m_Traits.hasOwnProperty(ID)) {
+				//Save
+				if (unlocks != null && unlocks[ID] != null && unlocks[ID]) TraitsValue += TraitsFactor;
+				TraitsFactor *= 2;
 
-			//Save
-			if (unlocks != null && unlocks[ID] != null && unlocks[ID]) TraitsValue += TraitsFactor;
-			TraitsFactor *= 2;
+				//Check if chunk size reached
+				Count++;
+				if (Count >= ENCODING_CHUNK_SIZE || (Count == ENCODING_CHUNK_SIZE - 1 && Result.length + Empty == 10)) {
+					//If nothing, don't do anything
+					if (TraitsValue === 0) Empty++;
+					else {
+						//Append the corresponding character
+						for (var i = 0; i < Empty; i++) Result = ENCODING_ALPHABET.charAt(0) + Result;
+						Result = ENCODING_ALPHABET.charAt(TraitsValue) + Result;
+						Empty = 0;
+					}
 
-			//Check if chunk size reached
-			Count++;
-			if (Count >= ENCODING_CHUNK_SIZE || (Count == ENCODING_CHUNK_SIZE - 1 && Result.length + Empty == 10)) {
-				//If nothing, don't do anything
-				if (TraitsValue === 0) Empty++;
-				else {
-					//Append the corresponding character
-					for (var i = 0; i < Empty; i++) Result = ENCODING_ALPHABET.charAt(0) + Result;
-					Result = ENCODING_ALPHABET.charAt(TraitsValue) + Result;
-					Empty = 0;
+					//Reset
+					Count			= 0;
+					TraitsValue		= 0;
+					TraitsFactor	= 1;
 				}
-
-				//Reset
-				Count			= 0;
-				TraitsValue		= 0;
-				TraitsFactor	= 1;
 			}
 		}
 
@@ -93,7 +91,7 @@ var TraitManager = function() {
 		if (traits == null) return;
 
 		//For each trait
-		for (i = 0; i < traits.length; i++) {
+		for (var i = 0; i < traits.length; i++) {
 			//Initialize data
 			var Trait = {
 				map: null,
@@ -105,8 +103,8 @@ var TraitManager = function() {
 			var Map			= traits[i].get("map");
 			var Num			= traits[i].get("number");
 			var Acquisition = traits[i].get("acquisition").id;
-			if (Num != null) 							Trait.number = Num;
-			if (Acquisition != null) 					Trait.acquisition = Acquisition;
+			if (Num != null)							Trait.number = Num;
+			if (Acquisition != null)					Trait.acquisition = Acquisition;
 			if (Map != null && Map.get("name") != null)	Trait.map = Map.get("name");
 
 			//Save

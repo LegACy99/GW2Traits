@@ -1,4 +1,6 @@
-/*jshint eqnull:true */
+/* jshint eqnull:true			*/
+/* global Parse, TraitManager	*/
+/* exported GW2Traits			*/
 
 var GW2Traits = function() {
 	//App data

@@ -10,17 +10,17 @@ var GW2Traits = function() {
 
 	//Cookie data
 	var m_MaxLevel			= 80;
-	var m_TraitUnlocks		= {};
-	var m_Acquisitions		= {};
 	var m_LastNotification	= new Date(0);
+	var m_AcquisitionFilter	= {};
+	var m_TraitUnlocks		= {};
 
 	//Other data
 	var m_TraitsParameter	= null;
 	var m_TooltipHandler	= function(){};
 
 	//Constants
-	var PARAMETER_TRAITS	= "traits";
 	var ELEMENT_TRAIT_ID	= "trait_";
+	var PARAMETER_TRAITS	= "traits";
 	var COOKIE_START		= "cookie";
 
 	//Initialize stuff
@@ -56,30 +56,20 @@ var GW2Traits = function() {
 		TraitQuery.find({
 			success: function(traits) {
 				//Initialize
+				TraitManager.setTraits(traits);
+				if (m_TraitsParameter != null) {
+					//Decode
+					m_TraitUnlocks 		= TraitManager.decodeTraits(m_TraitsParameter);
+					m_TraitsParameter 	= null;
+				}
+
+				//Browse array
 				var Row			= 0;
 				var Tier		= 0;
 				var Column		= 0;
 				var TraitList	= "";
 				var TierCounts	= [ 6, 10, 13 ];
-				var ID, i;
-
-				//For each trait
-				TraitManager.setTraits(traits);
-				for (i = 0; i < traits.length; i++) {
-					//Initialize
-					ID = traits[i].id;
-					if (m_TraitUnlocks[ID] == null)	m_TraitUnlocks[ID] = false;
-				}
-
-				//There's parameter?
-				if (m_TraitsParameter != null) {
-					//Decode
-					m_TraitUnlocks = TraitManager.decodeTraits(m_TraitsParameter);
-					m_TraitsParameter = null;
-				}
-
-				//For ecah result
-				for (i = 0; i < traits.length; i++) {
+				for (var i = 0; i < traits.length; i++) {
 					//Check tier
 					if (Column >= TierCounts[Tier]) {
 						//Increase tier
@@ -90,9 +80,6 @@ var GW2Traits = function() {
 							Column	= 0;
 						}
 					}
-
-					//Save data
-					ID = traits[i].id;
 
 					//Get map
 					var Map = traits[i].get("map");
@@ -115,6 +102,7 @@ var GW2Traits = function() {
 					if (Box > 0) TraitList += '<div class="trait-box box' + Box + '">';
 
 					//Create tool tip
+					var ID				= traits[i].id;
 					var Unlock			= traits[i].get("unlocking").replace(/"/g, '&quot;');
 					var TooltipLabel	= Map != null ? TraitManager.getTraitMap(ID) : traits[i].get("acquisition").get("name");
 					var Tooltip			= '&lt;div class=&quot;tooltip-unlock&quot;&gt;' + Unlock + '&lt;/div&gt;&lt;div class=&quot;tooltip-map&quot;&gt;' + TooltipLabel + ' &lt;/div&gt;';
@@ -125,8 +113,6 @@ var GW2Traits = function() {
 
 					//Next column
 					Column++;
-
-					//if closer
 					if (Column === TierCounts[0] || Column === TierCounts[1] || Column === TierCounts[2]) TraitList += '</div>';
 					if (Column === TierCounts[2]) TraitList += '</div>';
 				}
@@ -153,16 +139,13 @@ var GW2Traits = function() {
 
 				//For each type
 				for (var i = 0; i < acquisitions.length; i++) {
-					//Get ID
-					var ID = acquisitions[i].id;
-					if (m_Acquisitions[ID] == null) m_Acquisitions[ID] = true;
-
 					//Opens
 					if (i % 3 === 0) FilterText += '<div class="type-config-' + (i === 0 ? "left" : "right") + '">';
 
 					//Set text
+					var ID = acquisitions[i].id;
 					FilterText += '<label><input type="checkbox" onclick="GW2Traits.handleAcquisitionClick(this)"';
-					if (m_Acquisitions[ID]) FilterText += ' checked="checked"';
+					if (!m_AcquisitionFilter[ID]) FilterText += ' checked="checked"';
 					FilterText += ' id=acquisition-check_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
 
 					//Close
@@ -220,20 +203,12 @@ var GW2Traits = function() {
 						var RawJSON = CookiePair[1];
 						if (RawJSON != null && RawJSON.length > 0) {
 							//Create object
-							var j;
+							var j		= 0;
 							var Cookie = JSON.parse(decodeURI(RawJSON));
 
-							//Get trait
-							if (Cookie.traits != null) {
-								//For each trait
-								for (j = 0; j < Cookie.traits.length; j++) m_TraitUnlocks[Cookie.traits[j]] = true;
-							}
-
-							//Get acquisition filter
-							if (Cookie.acquisitions != null) {
-								//For each acquisition type
-								for (j = 0; j < Cookie.acquisitions.length; j++) m_Acquisitions[Cookie.acquisitions[j]] = false;
-							}
+							//Get trait and acquisition
+							if (Cookie.traits != null)			for (j = 0; j < Cookie.traits.length; j++) m_TraitUnlocks[Cookie.traits[j]] = true;
+							if (Cookie.acquisitions != null)	for (j = 0; j < Cookie.acquisitions.length; j++) m_AcquisitionFilter[Cookie.acquisitions[j]] = true;
 
 							//Get max level
 							if (Cookie.max_level != null) m_MaxLevel = Cookie.max_level;
@@ -258,8 +233,8 @@ var GW2Traits = function() {
 		};
 
 		//Populate
-		for (var TraitID in m_TraitUnlocks)			if (m_TraitUnlocks[TraitID]) Cookie.traits.push(TraitID);
-		for (var AcqusitionID in m_Acquisitions)	if (!m_Acquisitions[AcqusitionID]) Cookie.acquisitions.push(AcqusitionID);
+		for (var TraitID in m_TraitUnlocks)				if (m_TraitUnlocks[TraitID]) Cookie.traits.push(TraitID);
+		for (var AcqusitionID in m_AcquisitionFilter)	if (m_AcquisitionFilter[AcqusitionID]) Cookie.acquisitions.push(AcqusitionID);
 
 		//Write
 		var JSONText = encodeURI(JSON.stringify(Cookie));
@@ -268,17 +243,17 @@ var GW2Traits = function() {
 
 	var getTraitStyle = function(id) {
 		//Initialize
-		var Style = "";
+		var Result = "";
 
 		//If there's ID
 		if (id != null) {
 			//If trait exist
 			var Num = TraitManager.getTraitNumber(id);
-			if (Num != null) Style = "background-image: url(images/trait-" + Num + ".png); background-position: " + (m_TraitUnlocks[id] ? "100" : "0") + "% 0;";
+			if (Num != null) Result = "background-image: url(images/trait-" + Num + ".png); background-position: " + (m_TraitUnlocks[id] ? "100" : "0") + "% 0;";
 		}
 
 		//Return
-		return Style;
+		return Result;
 	};
 
 	//Set trait unlocking status
@@ -287,25 +262,23 @@ var GW2Traits = function() {
 		if (id == null) return;
 
 		//Initialize
-		var Unlocked	= Boolean(unlocked);
 		var Changed		= false;
+		var Unlocked	= Boolean(unlocked);
+		var WasUnlocked = Boolean(m_TraitUnlocks[id]);
 
-		//If trait exist
-		if ( m_TraitUnlocks[id] != null) {
 			//Check old value
-			var WasUnlocked = m_TraitUnlocks[id];
-			if (WasUnlocked != Unlocked) {
-				//Set data
-				Changed				= true;
-				m_TraitUnlocks[id]	= Unlocked;
+		if (WasUnlocked != Unlocked) {
+			//Set data
+			Changed = true;
+			if (Unlocked) 	m_TraitUnlocks[id] = true;
+			else			delete m_TraitUnlocks[id];
 
-				//Get element
-				var Element = document.getElementById(ELEMENT_TRAIT_ID + id);
-				if (Element != null) {
-					//Refresh element
-					Element.innerHTML = m_TraitUnlocks[id] ? " " : "";
-					Element.setAttribute("style", getTraitStyle(id));
-				}
+			//Get element
+			var Element = document.getElementById(ELEMENT_TRAIT_ID + id);
+			if (Element != null) {
+				//Refresh element
+				Element.innerHTML = m_TraitUnlocks[id] ? " " : "";
+				Element.setAttribute("style", getTraitStyle(id));
 			}
 		}
 
@@ -315,9 +288,10 @@ var GW2Traits = function() {
 
 	//Set all trait unlocking status
 	var setAllTraitsUnlock = function(unlocked) {
-		//For all traits
+		//Change all traits
 		var Changed = false;
-		for (var ID in m_TraitUnlocks) if (setTraitUnlock(ID, unlocked)) Changed = true;
+		var Traits 	= TraitManager.getTraitIDs();
+		for (var i = 0; i < Traits.length; i++) if (setTraitUnlock(Traits[i], unlocked)) Changed = true;
 
 		//If there's a change
 		if (Changed) {
@@ -345,23 +319,19 @@ var GW2Traits = function() {
 		//For all traits
 		var Traits = TraitManager.getTraitIDs();
 		for (var i = 0; i < Traits.length; i++) {							
-			//Validate map and trait
+			//Validate map
 			var Map		= TraitManager.getTraitMap(Traits[i]);
 			var Valid	= Map != null;
-			if (Valid) Valid = !m_TraitUnlocks[Traits[i]];
+
+			//If not unlocked and unfiltered
+			if (Valid) Valid = !m_TraitUnlocks[Traits[i]];			
+			if (Valid) Valid = !m_AcquisitionFilter[TraitManager.getTraitAcquisition(Traits[i])];
 
 			//If still valid
 			if (Valid) {
 				//Validate minimum level
 				Valid = m_MapLevels[Map] == null;
 				if (!Valid) Valid = m_MapLevels[Map] <= m_MaxLevel;
-			}
-
-			//If still valid
-			if (Valid) {
-				//Validate acquisition type
-				Valid = m_Acquisitions[TraitManager.getTraitAcquisition(Traits[i])];
-				if (Valid == null) Valid = true;
 			}
 
 			//If valid
@@ -454,11 +424,12 @@ var GW2Traits = function() {
 		//Skip if no element
 		if (element == null) return;
 
-		//Change data
-		m_Acquisitions[element.value] = element.checked;
-		saveCookies();
+		//Checked or no?
+		if (!element.checked) 	m_AcquisitionFilter[element.value] = true;
+		else					delete m_AcquisitionFilter[element.value];
 
 		//Refresh
+		saveCookies();
 		refreshMaps();
 	};
 

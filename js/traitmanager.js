@@ -154,13 +154,13 @@ var TraitManager = function() {
 				}
 			}
 
-			//Save
+			//For each trait
 			Index = 0;
 			for (var ID in m_Traits) {
 				//If valid
 				if (m_Traits.hasOwnProperty(ID)) {
 					//Save
-					Result[ID] = Traits[Index];
+					if (Traits[Index]) Result[ID] = true;
 					Index++;
 				}
 			}

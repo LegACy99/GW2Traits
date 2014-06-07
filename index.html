@@ -33,7 +33,7 @@
 
 		<!-- Notification -->
 		<div class="notification" id="notification">
-			<b>NEW! </b><span id="notification-message"></span><button class="notification-button" onclick="gw2traits.handleNotificationClose()">x</button>
+			<b>NEW! </b><span id="notification-message"></span><button class="notification-button" onclick="GW2Traits.handleNotificationClose()">x</button>
 		</div>
 
 		<!-- Content -->
@@ -44,8 +44,8 @@
  				<div class="panel-header">
 	  				<div class="panel-title" id="trait-title">Traits</div>
 	  				<div class="trait-buttons" id="trait-buttons">
-		  				<input class="trait-button" type="button" value="Lock all traits" onclick="gw2traits.setAllTraitsUnlock(false)" />
-		  				<input class="trait-button" type="button" value="Unlock all traits" onclick="gw2traits.setAllTraitsUnlock(true)" />
+		  				<input class="trait-button" type="button" value="Lock all traits" onclick="GW2Traits.setAllTraitsUnlock(false)" />
+		  				<input class="trait-button" type="button" value="Unlock all traits" onclick="GW2Traits.setAllTraitsUnlock(true)" />
 	  				</div>
 	  			</div>
 
@@ -64,7 +64,7 @@
 				<!-- Map filter -->
 				<div class="map-config">
 					<div class="level-config">
-						<b>Maximum level</b><select id="level-filter" onchange="gw2traits.handleLevelChange(this)">
+						<b>Maximum level</b><select id="level-filter" onchange="GW2Traits.handleLevelChange(this)">
 					    	<option value="30">30</option>
 					    	<option value="40">40</option>
 					    	<option value="50">50</option>
@@ -80,7 +80,7 @@
 			</div>
 
 			<div class="export" id="export">
-				<button class="export-button" onclick="gw2traits.handleExportClick()">Export traits</button>
+				<button class="export-button" onclick="GW2Traits.handleExportClick()">Export traits</button>
 				<input id="export-result" class="export-hint" type="text" disabled value="Exporting traits will generate a special link that you can use to share your current trait setup." />
 			</div>
 		</div>
@@ -102,7 +102,7 @@
 	  	<!-- Run javascript -->
 	  	<script>	  	
 			//Initialize
-			gw2traits.initialize(function() {
+			GW2Traits.initialize(function() {
 	            $('.tooltip').tooltipster({
 	            	contentAsHTML: true,
 	            	//interactive: true,
@@ -113,9 +113,9 @@
 			});
 
 			//Load contents
-			gw2traits.loadNotification();
-			gw2traits.loadAcquisitionTypes();
-			gw2traits.loadTraits();
+			GW2Traits.loadNotification();
+			GW2Traits.loadAcquisitionTypes();
+			GW2Traits.loadTraits();
       	</script>
   	</body>
 </html>

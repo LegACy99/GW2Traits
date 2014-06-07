@@ -1,6 +1,6 @@
 /*jshint eqnull:true */
 
-gw2traits = function() {
+var GW2Traits = function() {
 	//App data
 	var m_MapLinks	= {};
 	var m_MapCount	= {};
@@ -129,7 +129,7 @@ gw2traits = function() {
 
 					//Set div
 					var Content	= m_TraitUnlocks[ID] ? " " : "";
-					TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon tooltip" onclick="gw2traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '" title="' + Tooltip + '">' + Content + '</div>';
+					TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon tooltip" onclick="GW2Traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '" title="' + Tooltip + '">' + Content + '</div>';
 
 					//Next column
 					Column++;
@@ -169,7 +169,7 @@ gw2traits = function() {
 					if (i % 3 === 0) FilterText += '<div class="type-config-' + (i === 0 ? "left" : "right") + '">';
 
 					//Set text
-					FilterText += '<label><input type="checkbox" onclick="gw2traits.handleAcquisitionClick(this)"';
+					FilterText += '<label><input type="checkbox" onclick="GW2Traits.handleAcquisitionClick(this)"';
 					if (m_Acquisitions[ID]) FilterText += ' checked="checked"';
 					FilterText += ' id=acquisition-check_"' + ID + '" value="' + ID + '"> ' + acquisitions[i].get("name") + '</label><br />';
 

@@ -5,7 +5,6 @@ var GW2Traits = function() {
 	var m_MapLinks	= {};
 	var m_MapCount	= {};
 	var m_MapLevels	= {};
-	var m_Traits	= {};
 
 	//Cookie data
 	var m_MaxLevel			= 80;
@@ -18,14 +17,9 @@ var GW2Traits = function() {
 	var m_TooltipHandler	= function(){};
 
 	//Constants
-	var TRAIT_MAP			= "map";
-	var TRAIT_NUMBER		= "number";
-	var TRAIT_ACQUISITION	= "acquisition";
-	var ENCODING_ALPHABET	= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 	var PARAMETER_TRAITS	= "traits";
 	var ELEMENT_TRAIT_ID	= "trait_";
 	var COOKIE_START		= "cookie";
-	var ENCODE_CHUNK		= 6;
 
 	//Initialize stuff
 	var initialize = function(tooltip) {
@@ -55,8 +49,8 @@ var GW2Traits = function() {
 		var TraitObject = Parse.Object.extend("Trait");
 		var TraitQuery	= new Parse.Query(TraitObject);
 		TraitQuery.ascending("createdAt");
-		TraitQuery.include("map");
 		TraitQuery.include("acquisition");
+		TraitQuery.include("map");
 		TraitQuery.find({
 			success: function(traits) {
 				//Initialize
@@ -68,17 +62,17 @@ var GW2Traits = function() {
 				var ID, i;
 
 				//For each trait
+				TraitManager.setTraits(traits);
 				for (i = 0; i < traits.length; i++) {
 					//Initialize
 					ID = traits[i].id;
-					if (m_Traits[ID] == null)		m_Traits[traits[i].id] = {};
 					if (m_TraitUnlocks[ID] == null)	m_TraitUnlocks[ID] = false;
 				}
 
 				//There's parameter?
 				if (m_TraitsParameter != null) {
 					//Decode
-					decodeTraits(m_TraitsParameter);
+					m_TraitUnlocks = TraitManager.decodeTraits(m_TraitsParameter);
 					m_TraitsParameter = null;
 				}
 
@@ -97,9 +91,6 @@ var GW2Traits = function() {
 
 					//Save data
 					ID = traits[i].id;
-					m_Traits[ID][TRAIT_NUMBER]		= traits[i].get("number");
-					m_Traits[ID][TRAIT_ACQUISITION] = traits[i].get(TRAIT_ACQUISITION).id;
-					if (m_TraitUnlocks[ID] == null) m_TraitUnlocks[ID] = false;
 
 					//Get map
 					var Map = traits[i].get("map");
@@ -108,7 +99,6 @@ var GW2Traits = function() {
 						var MapName				= Map.get("name");
 						m_MapLinks[MapName]		= Map.get("wiki");
 						m_MapLevels[MapName]	= Map.get("minLevel");
-						m_Traits[ID][TRAIT_MAP] = MapName;
 					}
 
 					//If first column
@@ -124,7 +114,7 @@ var GW2Traits = function() {
 
 					//Create tool tip
 					var Unlock			= traits[i].get("unlocking").replace(/"/g, '&quot;');
-					var TooltipLabel	= Map != null ? m_Traits[ID][TRAIT_MAP] : traits[i].get(TRAIT_ACQUISITION).get("name");
+					var TooltipLabel	= Map != null ? TraitManager.getTraitMap(ID) : traits[i].get("acquisition").get("name");
 					var Tooltip			= '&lt;div class=&quot;tooltip-unlock&quot;&gt;' + Unlock + '&lt;/div&gt;&lt;div class=&quot;tooltip-map&quot;&gt;' + TooltipLabel + ' &lt;/div&gt;';
 
 					//Set div
@@ -266,7 +256,7 @@ var GW2Traits = function() {
 		};
 
 		//Populate
-		for (var TraitID in m_Traits)				if (m_TraitUnlocks[TraitID]) Cookie.traits.push(TraitID);
+		for (var TraitID in m_TraitUnlocks)			if (m_TraitUnlocks[TraitID]) Cookie.traits.push(TraitID);
 		for (var AcqusitionID in m_Acquisitions)	if (!m_Acquisitions[AcqusitionID]) Cookie.acquisitions.push(AcqusitionID);
 
 		//Write
@@ -281,8 +271,8 @@ var GW2Traits = function() {
 		//If there's ID
 		if (id != null) {
 			//If trait exist
-			var Trait = m_Traits[id];
-			if (Trait != null) Style = "background-image: url(images/trait-" + Trait[TRAIT_NUMBER] + ".png); background-position: " + (m_TraitUnlocks[id] ? "100" : "0") + "% 0;";
+			var Num = TraitManager.getTraitNumber(id);
+			if (Num != null) Style = "background-image: url(images/trait-" + Num + ".png); background-position: " + (m_TraitUnlocks[id] ? "100" : "0") + "% 0;";
 		}
 
 		//Return
@@ -295,12 +285,11 @@ var GW2Traits = function() {
 		if (id == null) return;
 
 		//Initialize
-		var Trait		= m_Traits[id];
 		var Unlocked	= Boolean(unlocked);
 		var Changed		= false;
 
 		//If trait exist
-		if (Trait != null) {
+		if ( m_TraitUnlocks[id] != null) {
 			//Check old value
 			var WasUnlocked = m_TraitUnlocks[id];
 			if (WasUnlocked != Unlocked) {
@@ -326,7 +315,7 @@ var GW2Traits = function() {
 	var setAllTraitsUnlock = function(unlocked) {
 		//For all traits
 		var Changed = false;
-		for (var ID in m_Traits) if (setTraitUnlock(ID, unlocked)) Changed = true;
+		for (var ID in m_TraitUnlocks) if (setTraitUnlock(ID, unlocked)) Changed = true;
 
 		//If there's a change
 		if (Changed) {
@@ -352,14 +341,12 @@ var GW2Traits = function() {
 		for (var Name in m_MapCount) if (m_MapCount.hasOwnProperty(Name)) m_MapCount[Name] = 0;
 
 		//For all traits
-		for (var ID in m_Traits) {
-			//Skip if not key
-			if (!m_Traits.hasOwnProperty(ID)) continue;
-							
+		var Traits = TraitManager.getTraitIDs();
+		for (var i = 0; i < Traits.length; i++) {							
 			//Validate map and trait
-			var Map		= m_Traits[ID][TRAIT_MAP];
+			var Map		= TraitManager.getTraitMap(Traits[i]);
 			var Valid	= Map != null;
-			if (Valid) Valid = !m_TraitUnlocks[ID];
+			if (Valid) Valid = !m_TraitUnlocks[Traits[i]];
 
 			//If still valid
 			if (Valid) {
@@ -371,7 +358,7 @@ var GW2Traits = function() {
 			//If still valid
 			if (Valid) {
 				//Validate acquisition type
-				Valid = m_Acquisitions[m_Traits[ID][TRAIT_ACQUISITION]];
+				Valid = m_Acquisitions[TraitManager.getTraitAcquisition(Traits[i])];
 				if (Valid == null) Valid = true;
 			}
 
@@ -443,99 +430,6 @@ var GW2Traits = function() {
 		document.getElementById('map-ul').innerHTML = MapList;
 	};
 
-	var encodeTraits = function() {
-		//Initialize
-		var Count			= 0;
-		var Empty			= 0;
-		var TraitsValue		= 0;
-		var TraitsFactor	= 1;
-		var Result			= "";
-
-		//For each trait
-		for (var ID in m_Traits) {
-			//Skip if not key
-			if (!m_Traits.hasOwnProperty(ID)) continue;
-
-			//Save
-			if (m_TraitUnlocks[ID]) TraitsValue += TraitsFactor;
-			TraitsFactor *= 2;
-
-			//Check if chunk size reached
-			Count++;
-			if (Count >= ENCODE_CHUNK || (Count == ENCODE_CHUNK - 1 && Result.length + Empty == 10)) {
-				//If nothing, don't do anything
-				if (TraitsValue === 0) Empty++;
-				else {
-					//Append the corresponding character
-					for (var i = 0; i < Empty; i++) Result = ENCODING_ALPHABET.charAt(0) + Result;
-					Result = ENCODING_ALPHABET.charAt(TraitsValue) + Result;
-					Empty = 0;
-				}
-
-				//Reset
-				Count			= 0;
-				TraitsValue		= 0;
-				TraitsFactor	= 1;
-			}
-		}
-
-		//Return
-		return Result;
-	};
-
-	var decodeTraits = function(traits) {
-		//Validate
-		if (traits == null)		return;
-		if (traits.length <= 0)	return;
-
-		//Initialize
-		var i		= 0;
-		var Min		= 0;
-		var Index	= 0;
-		var Traits	= [];
-		if (traits.length > 11) Min = traits.length - 11;
-		for (i = 0; i < Object.keys(m_Traits).length; i++) Traits.push(false);
-
-		//For each character
-		for (i = traits.length - 1; i >= Min; i--) {
-			//Get value
-			var Char	= traits.charAt(i);
-			var Value	= ENCODING_ALPHABET.indexOf("" + Char);
-			if (Value >= ENCODING_ALPHABET.length)	Value = ENCODING_ALPHABET - 1;
-			if (Value < 0)							Value = 0;
-
-			//While
-			var Offset = ENCODE_CHUNK - 1;
-			var Factor = Math.pow(2, Offset);
-			while (Offset >= 0) {
-				//If true for that factor
-				if (Value >= Factor) {
-					//Remove from value
-					Value -= Factor;
-
-					//Check index
-					Index = ((traits.length - 1 - i) * ENCODE_CHUNK) + Offset;
-					if (Index < Traits.length) Traits[Index] = true;
-				}
-
-				//Reduce
-				Factor /= 2;
-				Offset--;
-			}
-		}
-
-		//Save
-		Index = 0;
-		for (var ID in m_Traits) {
-			//If valid
-			if (m_Traits.hasOwnProperty(ID)) {
-				//Save
-				m_TraitUnlocks[ID] = Traits[Index];
-				Index++;
-			}
-		}
-	};
-
 	//Trait checkbox click
 	var handleTraitClick = function(element) {
 		//Skip if no element
@@ -596,7 +490,7 @@ var GW2Traits = function() {
 	//Exporting
 	var handleExportClick = function() {
 		//Encode traits
-		var Encoded = encodeTraits();
+		var Encoded = TraitManager.encodeTraits(m_TraitUnlocks);
 
 		//Get result element
 		var Result = document.getElementById('export-result');

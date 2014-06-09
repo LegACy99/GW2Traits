@@ -7,6 +7,7 @@ var GW2Traits = function() {
 	var m_Maps				= {};
 	var m_TraitsParameter	= null;
 	var m_TooltipHandler	= function(){};
+	var m_Traits			= TraitManager();
 
 	//Cookie data
 	var m_MaxLevel			= 80;
@@ -54,15 +55,49 @@ var GW2Traits = function() {
 		TraitQuery.find({
 			success: function(traits) {
 				//Initialize
-				TraitManager.setTraits(traits);
+				m_Traits.setTraits(traits);
 				if (m_TraitsParameter != null) {
 					//Decode
-					m_TraitUnlocks		= TraitManager.decodeTraits(m_TraitsParameter);
+					m_TraitUnlocks		= m_Traits.decodeTraits(m_TraitsParameter);
 					m_TraitsParameter	= null;
 				}
 
+				//For each trait
+				for (var i = 0; i < traits.length; i++) {
+					//Get map
+					var Map = traits[i].get("map");
+					if (Map != null) m_Maps[Map.get("name")] = {
+						level: Map.get("minLevel"),
+						link: Map.get("wiki")
+					};
+				}
+
+				//Get structured trait
+				var TraitList	= "";
+				var Traits		= m_Traits.getTraitIDs(true);
+				for (var row = 0; row < Traits.length; row++) {
+					//Open row
+					TraitList += '<div class="trait-row row' + row + '">';
+					for (var tier = 0; tier < Traits[row].length; tier++) {
+						//Open tier box
+						TraitList += '<div class="trait-box box' + (tier + 1) + '">';
+						for (var cell = 0; cell < Traits[row][tier].length; cell++) {
+							//Write cell
+							var ID		= Traits[row][tier][cell];
+							var Content	= m_TraitUnlocks[ID] ? " " : "";
+							TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon" onclick="GW2Traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '">' + Content + '</div>';
+						}
+
+						//Close tier box
+						TraitList += "</div>";
+					}
+
+					//Close row
+					TraitList += "</div>";
+				}
+
 				//Browse array
-				var Row			= 0;
+				/*var Row			= 0;
 				var Tier		= 0;
 				var Column		= 0;
 				var TraitList	= "";
@@ -79,13 +114,6 @@ var GW2Traits = function() {
 						}
 					}
 
-					//Get map
-					var Map = traits[i].get("map");
-					if (Map != null) m_Maps[Map.get("name")] = {
-						level: Map.get("minLevel"),
-						link: Map.get("wiki")
-					};
-
 					//If first column
 					if (Column === 0) {
 						//Start row
@@ -100,7 +128,7 @@ var GW2Traits = function() {
 					//Create tool tip
 					var ID				= traits[i].id;
 					var Unlock			= traits[i].get("unlocking").replace(/"/g, '&quot;');
-					var TooltipLabel	= Map != null ? TraitManager.getTraitMap(ID) : traits[i].get("acquisition").get("name");
+					var TooltipLabel	= Map != null ? m_Traits.getTraitMap(ID) : traits[i].get("acquisition").get("name");
 					var Tooltip			= '&lt;div class=&quot;tooltip-unlock&quot;&gt;' + Unlock + '&lt;/div&gt;&lt;div class=&quot;tooltip-map&quot;&gt;' + TooltipLabel + ' &lt;/div&gt;';
 
 					//Set div
@@ -111,7 +139,7 @@ var GW2Traits = function() {
 					Column++;
 					if (Column === TierCounts[0] || Column === TierCounts[1] || Column === TierCounts[2]) TraitList += '</div>';
 					if (Column === TierCounts[2]) TraitList += '</div>';
-				}
+				}*/
 
 				//Write stuff
 				document.getElementById('trait-panel').insertAdjacentHTML("beforeend", TraitList);
@@ -244,7 +272,7 @@ var GW2Traits = function() {
 		//If there's ID
 		if (id != null) {
 			//If trait exist
-			var Num = TraitManager.getTraitNumber(id);
+			var Num = m_Traits.getTraitNumber(id);
 			if (Num != null) Result = "background-image: url(images/trait-" + Num + ".png); background-position: " + (m_TraitUnlocks[id] ? "100" : "0") + "% 0;";
 		}
 
@@ -286,7 +314,7 @@ var GW2Traits = function() {
 	var setAllTraitsUnlock = function(unlocked) {
 		//Change all traits
 		var Changed = false;
-		var Traits	= TraitManager.getTraitIDs();
+		var Traits	= m_Traits.getTraitIDs();
 		for (var i = 0; i < Traits.length; i++) if (setTraitUnlock(Traits[i], unlocked)) Changed = true;
 
 		//If there's a change
@@ -311,15 +339,15 @@ var GW2Traits = function() {
 	var countMaps = function() {
 		//Initialize
 		var Result = {};
-		var Traits = TraitManager.getTraitIDs();
-		for (var i = 0; i < Traits.length; i++) {							
+		var Traits = m_Traits.getTraitIDs();
+		for (var i = 0; i < Traits.length; i++) {
 			//Validate map
-			var Name	= TraitManager.getTraitMap(Traits[i]);
+			var Name	= m_Traits.getTraitMap(Traits[i]);
 			var Valid	= Name != null;
 
 			//If not unlocked and unfiltered
 			if (Valid) Valid = !m_TraitUnlocks[Traits[i]];			
-			if (Valid) Valid = !m_AcquisitionFilter[TraitManager.getTraitAcquisition(Traits[i])];
+			if (Valid) Valid = !m_AcquisitionFilter[m_Traits.getTraitAcquisition(Traits[i])];
 
 			//If still valid
 			if (Valid) {
@@ -464,7 +492,7 @@ var GW2Traits = function() {
 	//Exporting
 	var handleExportClick = function() {
 		//Encode traits
-		var Encoded = TraitManager.encodeTraits(m_TraitUnlocks);
+		var Encoded = m_Traits.encodeTraits(m_TraitUnlocks);
 
 		//Get result element
 		var Result = document.getElementById('export-result');

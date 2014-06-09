@@ -3,17 +3,48 @@
 
 var TraitManager = function() {
 	//Members
-	var m_Traits = {};
+	var m_Traits	= {};
+	var m_TraitList	= [];
 
 	//Constants
+	var TIER_ORDER			= [];
+	var NUMBER_ORDER		= [ "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV" ];
 	var ENCODING_ALPHABET	= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 	var ENCODING_CHUNK_SIZE	= 6;
 
-	var getTraitIDs = function() {
-		//Create array
-		var Result = [];
-		for (var ID in m_Traits) if (m_Traits.hasOwnProperty(ID)) Result.push(ID);
+	var getTraitIDs = function(structured) {
+		//Set default value
+		structured = (typeof structured === "undefined") ? false : structured;
 		
+		//Initialize
+		var Result = [];
+		if (!structured) Result = m_TraitList;
+		else {
+			//For each trait
+			for (var i = 0; i < m_TraitList.length; i++) {
+				//Get trait
+				var Trait = m_Traits[m_TraitList[i]];
+
+				//Get row array
+				if (Result[Trait.line - 1] == null) Result[Trait.line - 1] = [];
+				var Row = Result[Trait.line - 1];
+
+				//Get index
+				var Index = 0;
+				while (Index < NUMBER_ORDER.length && Trait.number != NUMBER_ORDER[Index]) Index++;
+
+				//Get tier
+				var Tier = 0;
+				if (Index >= 10)	{ Tier = 2; Index -= 10;	}
+				if (Index >= 6)		{ Tier = 1; Index -= 6;		}
+				if (Row[Tier] == null) Row[Tier] = [];
+				var TraitTier = Row[Tier];
+
+				//Save
+				TraitTier[Index] = m_TraitList[i];
+			}
+		}
+
 		//Return
 		return Result;
 	};
@@ -83,33 +114,76 @@ var TraitManager = function() {
 
 		//Return
 		return Result;
-	};	
+	};
 
 	//Exporting
 	var setTraits = function(traits) {
 		//Skip if no traits
 		if (traits == null) return;
 
+		//Initialize
+		m_Traits	= {};
+		var MaxRow	= 0;
+
 		//For each trait
-		for (var i = 0; i < traits.length; i++) {
+		var i = 0;
+		for (i = 0; i < traits.length; i++) {
 			//Initialize data
 			var Trait = {
+				line: 1,
 				map: null,
-				number: 0,
+				tier: null,
+				number: null,
 				acquisition: null
 			};
 
 			//Read data
 			var Map			= traits[i].get("map");
-			var Num			= traits[i].get("number");
+			var Line		= traits[i].get("line");
+			var Tier		= traits[i].get("tier");
+			var Numba		= traits[i].get("number");
 			var Acquisition = traits[i].get("acquisition").id;
-			if (Num != null)							Trait.number = Num;
-			if (Acquisition != null)					Trait.acquisition = Acquisition;
 			if (Map != null && Map.get("name") != null)	Trait.map = Map.get("name");
+			if (Acquisition != null)					Trait.acquisition = Acquisition;
+			if (Tier != null)							Trait.tier = Tier;
+			if (Line != null)							Trait.line = Line;
+
+			//If there's number
+			if (Numba != null) {
+				//Save
+				Trait.number = Numba;
+
+				//Get order
+				var Order = 0;
+				while (Order < NUMBER_ORDER.length && Numba != NUMBER_ORDER[Order]) Order++;
+				if (Order + 1 > MaxRow) MaxRow = Order + 1;
+			}
 
 			//Save
 			m_Traits[traits[i].id] = Trait;
 		}
+
+		//For each trait
+		var TraitList = [];
+		for (var ID in m_Traits) {
+			//If valid key
+			if (m_Traits.hasOwnProperty(ID)) {
+				//If trait has a number
+				if (m_Traits[ID].number != null) {
+					//Get index
+					var Index = 0;
+					while (Index < NUMBER_ORDER.length && m_Traits[ID].number != NUMBER_ORDER[Index]) Index++;
+					Index += (m_Traits[ID].line - 1) * MaxRow;
+
+					//Save
+					TraitList[Index] = ID;
+				}
+			}
+		}
+
+		//Save without gap
+		m_TraitList = [];
+		for (i = 0; i < TraitList.length; i++) if (TraitList[i] != null) m_TraitList.push(TraitList[i]);
 	};
 
 	var decodeTraits = function(traits) {
@@ -180,4 +254,4 @@ var TraitManager = function() {
 		decodeTraits: decodeTraits,
 		setTraits: setTraits
 	};
-}();
+};

@@ -7,42 +7,41 @@ var TraitManager = function() {
 	var m_TraitList	= [];
 
 	//Constants
-	var TIER_ORDER			= [];
+	var TIER_ORDER			= [ "rSjaATHNVp", "4Q9BEZ8SgU", "i2XMdWvaNI" ];
 	var NUMBER_ORDER		= [ "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV" ];
 	var ENCODING_ALPHABET	= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 	var ENCODING_CHUNK_SIZE	= 6;
 
-	var getTraitIDs = function(structured) {
-		//Set default value
-		structured = (typeof structured === "undefined") ? false : structured;
-		
+	var getIDs = function() {
+		//Return list of traits
+		return m_TraitList;
+	};
+
+	//
+	var getStructuredIDs = function() {
 		//Initialize
 		var Result = [];
-		if (!structured) Result = m_TraitList;
-		else {
-			//For each trait
-			for (var i = 0; i < m_TraitList.length; i++) {
-				//Get trait
-				var Trait = m_Traits[m_TraitList[i]];
+		for (var i = 0; i < m_TraitList.length; i++) {
+			//Get trait
+			var Trait = m_Traits[m_TraitList[i]];
 
-				//Get row array
-				if (Result[Trait.line - 1] == null) Result[Trait.line - 1] = [];
-				var Row = Result[Trait.line - 1];
+			//Get row array
+			if (Result[Trait.line - 1] == null) Result[Trait.line - 1] = [];
+			var Row = Result[Trait.line - 1];
 
-				//Get index
-				var Index = 0;
-				while (Index < NUMBER_ORDER.length && Trait.number != NUMBER_ORDER[Index]) Index++;
+			//Get index
+			var Index = 0;
+			while (Index < NUMBER_ORDER.length && Trait.number != NUMBER_ORDER[Index]) Index++;
 
-				//Get tier
-				var Tier = 0;
-				if (Index >= 10)	{ Tier = 2; Index -= 10;	}
-				if (Index >= 6)		{ Tier = 1; Index -= 6;		}
-				if (Row[Tier] == null) Row[Tier] = [];
-				var TraitTier = Row[Tier];
+			//Get tier
+			var Tier = 0;
+			if (Index >= 10)	{ Tier = 2; Index -= 10;	}
+			if (Index >= 6)		{ Tier = 1; Index -= 6;		}
+			if (Row[Tier] == null) Row[Tier] = [];
+			var TraitTier = Row[Tier];
 
-				//Save
-				TraitTier[Index] = m_TraitList[i];
-			}
+			//Save
+			TraitTier[Index] = m_TraitList[i];
 		}
 
 		//Return

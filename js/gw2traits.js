@@ -15,8 +15,6 @@ var GW2Traits = function() {
 	var m_AcquisitionFilter	= {};
 	var m_TraitUnlocks		= {};
 
-	//Other data
-
 	//Constants
 	var ELEMENT_TRAIT_ID	= "trait_";
 	var PARAMETER_TRAITS	= "traits";
@@ -63,7 +61,14 @@ var GW2Traits = function() {
 				}
 
 				//For each trait
+				var TraitData = {};
 				for (var i = 0; i < traits.length; i++) {
+					//Get additional trait data
+					TraitData[traits[i].id] = {
+						unlocking: traits[i].get("unlocking"),
+						acquisition: traits[i].get("acquisition").get("name")
+					};
+
 					//Get map
 					var Map = traits[i].get("map");
 					if (Map != null) m_Maps[Map.get("name")] = {
@@ -74,7 +79,7 @@ var GW2Traits = function() {
 
 				//Get structured trait
 				var TraitList	= "";
-				var Traits		= m_Traits.getTraitIDs(true);
+				var Traits		= m_Traits.getStructuredIDs();
 				for (var row = 0; row < Traits.length; row++) {
 					//Open row
 					TraitList += '<div class="trait-row row' + row + '">';
@@ -82,10 +87,16 @@ var GW2Traits = function() {
 						//Open tier box
 						TraitList += '<div class="trait-box box' + (tier + 1) + '">';
 						for (var cell = 0; cell < Traits[row][tier].length; cell++) {
-							//Write cell
-							var ID		= Traits[row][tier][cell];
+							//Create tool tip
+							var ID				= Traits[row][tier][cell];
+							var TooltipLabel	= m_Traits.getTraitMap(ID);
+							if (TooltipLabel == null) TooltipLabel = TraitData[ID].acquisition;
+							var Unlocking		= TraitData[ID].unlocking.replace(/"/g, '&quot;');
+							var Tooltip			= '&lt;div class=&quot;tooltip-unlock&quot;&gt;' + Unlocking + '&lt;/div&gt;&lt;div class=&quot;tooltip-map&quot;&gt;' + TooltipLabel + ' &lt;/div&gt;';
+
+							//Create cell
 							var Content	= m_TraitUnlocks[ID] ? " " : "";
-							TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon" onclick="GW2Traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '">' + Content + '</div>';
+							TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon tooltip" onclick="GW2Traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '" title="' + Tooltip + '">' + Content + '</div>';
 						}
 
 						//Close tier box
@@ -96,56 +107,13 @@ var GW2Traits = function() {
 					TraitList += "</div>";
 				}
 
-				//Browse array
-				/*var Row			= 0;
-				var Tier		= 0;
-				var Column		= 0;
-				var TraitList	= "";
-				var TierCounts	= [ 6, 10, 13 ];
-				for (var i = 0; i < traits.length; i++) {
-					//Check tier
-					if (Column >= TierCounts[Tier]) {
-						//Increase tier
-						Tier++;
-						if (Tier >= TierCounts.length) {
-							//Reset
-							Tier	= 0;
-							Column	= 0;
-						}
-					}
-
-					//If first column
-					if (Column === 0) {
-						//Start row
-						Row++;
-						TraitList += '<div class="trait-row row' + Row + '">';
-					}
-
-					//If starting box
-					var Box = Column === 0 ? 1 : Column == TierCounts[0] ? 2 : Column == TierCounts[1] ? 3 : 0;
-					if (Box > 0) TraitList += '<div class="trait-box box' + Box + '">';
-
-					//Create tool tip
-					var ID				= traits[i].id;
-					var Unlock			= traits[i].get("unlocking").replace(/"/g, '&quot;');
-					var TooltipLabel	= Map != null ? m_Traits.getTraitMap(ID) : traits[i].get("acquisition").get("name");
-					var Tooltip			= '&lt;div class=&quot;tooltip-unlock&quot;&gt;' + Unlock + '&lt;/div&gt;&lt;div class=&quot;tooltip-map&quot;&gt;' + TooltipLabel + ' &lt;/div&gt;';
-
-					//Set div
-					var Content	= m_TraitUnlocks[ID] ? " " : "";
-					TraitList += '<div id="' + ELEMENT_TRAIT_ID + ID + '" class="trait-icon tooltip" onclick="GW2Traits.handleTraitClick(this)" style="' + getTraitStyle(ID) + '" title="' + Tooltip + '">' + Content + '</div>';
-
-					//Next column
-					Column++;
-					if (Column === TierCounts[0] || Column === TierCounts[1] || Column === TierCounts[2]) TraitList += '</div>';
-					if (Column === TierCounts[2]) TraitList += '</div>';
-				}*/
-
-				//Write stuff
+				//Modify page
 				document.getElementById('trait-panel').insertAdjacentHTML("beforeend", TraitList);
 				document.getElementById('trait-buttons').setAttribute("style", "display: inline-block;");
 				document.getElementById('export').setAttribute("style", "display: block;");
 				if (m_TooltipHandler != null) m_TooltipHandler();
+
+				//Count map
 				refreshMaps();
 			}
 		});
@@ -314,7 +282,7 @@ var GW2Traits = function() {
 	var setAllTraitsUnlock = function(unlocked) {
 		//Change all traits
 		var Changed = false;
-		var Traits	= m_Traits.getTraitIDs();
+		var Traits	= m_Traits.getIDs();
 		for (var i = 0; i < Traits.length; i++) if (setTraitUnlock(Traits[i], unlocked)) Changed = true;
 
 		//If there's a change
@@ -339,14 +307,14 @@ var GW2Traits = function() {
 	var countMaps = function() {
 		//Initialize
 		var Result = {};
-		var Traits = m_Traits.getTraitIDs();
+		var Traits = m_Traits.getIDs();
 		for (var i = 0; i < Traits.length; i++) {
 			//Validate map
 			var Name	= m_Traits.getTraitMap(Traits[i]);
 			var Valid	= Name != null;
 
 			//If not unlocked and unfiltered
-			if (Valid) Valid = !m_TraitUnlocks[Traits[i]];			
+			if (Valid) Valid = !m_TraitUnlocks[Traits[i]];
 			if (Valid) Valid = !m_AcquisitionFilter[m_Traits.getTraitAcquisition(Traits[i])];
 
 			//If still valid
